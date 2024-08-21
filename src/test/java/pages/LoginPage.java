@@ -1,5 +1,6 @@
 package pages;
 
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -39,6 +40,15 @@ public class LoginPage {
         enterUsername(username);
         enterPassword(password);
         clickLoginButton();
+    }
+
+    public boolean isLoginButtonPresent() {
+        try{
+            wait.until(ExpectedConditions.visibilityOf(this.loginButton));
+            return true;
+        }catch (NoSuchElementException e){
+            return false;
+        }
     }
 
     public String getUsername() {
