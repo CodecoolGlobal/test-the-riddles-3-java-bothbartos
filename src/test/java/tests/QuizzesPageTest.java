@@ -58,6 +58,6 @@ class QuizzesPageTest extends BaseTest {
     }
     @AfterEach
     public void teardown(){
-        logoutIfNotLoggedIn();
+        logoutIfLoggedIn();
     }
 }

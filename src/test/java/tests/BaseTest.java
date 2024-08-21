@@ -68,7 +68,7 @@ public abstract class BaseTest {
         quizzesPage = new QuizzesPage(driver, wait);
     }
 
-    protected void logoutIfNotLoggedIn(){
+    protected void logoutIfLoggedIn(){
         try{
             driver.findElement(By.xpath("//*[text()='Logout']"));
             mainPage.clickLogout();
