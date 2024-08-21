@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MainPageTest extends BaseTest {
 
-    @Order(1)
     @ParameterizedTest
     @MethodSource("getLoginCredentials")
     public void testLoginLogout(String username, String password) {
@@ -26,7 +25,6 @@ public class MainPageTest extends BaseTest {
         mainPage.clickLogout();
     }
 
-    @Order(2)
     @ParameterizedTest
     @MethodSource("getSignUpCredentials")
     public void testSignUp(String username, String email, String password) {
