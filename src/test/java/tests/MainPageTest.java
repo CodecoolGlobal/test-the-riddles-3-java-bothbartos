@@ -16,6 +16,13 @@ import java.util.stream.Stream;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MainPageTest extends BaseTest {
 
+    @BeforeEach
+    public void setupTest() {
+        initializeDriver();
+        driver.get(baseUrl);
+        driver.manage().window().maximize();
+    }
+
     @ParameterizedTest
     @MethodSource("getLoginCredentials")
     public void testLoginLogout(String username, String password) {
