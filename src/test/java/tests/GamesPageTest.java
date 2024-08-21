@@ -7,16 +7,64 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class GamesPageTest extends BaseTest {
 
-    @Order(1)
+    @BeforeEach
+    void setUp() {
+        initializeDriver();
+        driver.get(baseUrl + "login");
+        driver.manage().window().maximize();
+        loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
+    }
+
+    @AfterEach
+    public void tearDown() {
+        try{
+            deleteAllQuizzes();
+        }catch (Exception e){
+            System.out.println("Error deleting quizzes");
+        }
+        if(driver !=null){
+            driver.quit();
+        }
+    }
+
     @Test
     @DisplayName("Start new quiz game")
     public void startNewQuizGameTest() {
-        mainPage.clickLogin();
-        loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
+        startNewGame();
 
+        assertUrlContains("game/lobby/");
+
+    }
+
+    @Test
+    @DisplayName("Find game by name and join")
+    public void findGameByNameAndJoinTest() {
+        startNewGame();
+
+        driver.get(baseUrl);
+
+        mainPage.clickGames();
+        gamesPage.clickJoinGameByName(dotenv.get("QUIZ_TITLE_1"));
+        assertUrlContains("game/quiz");
+    }
+
+    @Test
+    @DisplayName("Join game and rename player then join")
+    public void joinGameAndRenamePlayerTest() {
+        startNewGame();
+
+        driver.get(baseUrl);
+
+        mainPage.clickGames();
+        gamesPage.clickJoinGameByName(dotenv.get("QUIZ_TITLE_1"));
+        gamesPage.renamePlayer("PLAYER");
+        assertTrue(wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[text()='Good luck!']"))).isDisplayed());
+    }
+
+
+    private void startNewGame(){
         mainPage.clickMyQuizzes();
         quizFormPage.createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_1"));
         answerFormPage.enterFirstAnswer(dotenv.get("QUIZ_1_ANSWER_1"), true);
@@ -29,31 +77,6 @@ class GamesPageTest extends BaseTest {
 
         myQuizzesPage.playQuiz(dotenv.get("QUIZ_TITLE_1"));
 
-        assertUrlContains("game/lobby/");
-        driver.get(baseUrl);
-
-    }
-
-    @Order(2)
-    @Test
-    @DisplayName("Find game by name and join")
-    public void findGameByNameAndJoinTest() {
-        mainPage.clickGames();
-        gamesPage.clickJoinGameByName(dotenv.get("QUIZ_TITLE_1"));
-        assertUrlContains("game/quiz");
-        driver.get(baseUrl);
-    }
-
-    @Order(3)
-    @Test
-    @DisplayName("Join game and rename player then join")
-    public void joinGameAndRenamePlayerTest() {
-        mainPage.clickGames();
-        gamesPage.clickJoinGameByName(dotenv.get("QUIZ_TITLE_1"));
-        gamesPage.renamePlayer("PLAYER");
-        assertTrue(wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[text()='Good luck!']"))).isDisplayed());
-        driver.get(baseUrl);
-        mainPage.clickLogout();
     }
 
 }
