@@ -3,6 +3,7 @@ package tests;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MyQuizzesPageTest extends BaseTest {
@@ -44,7 +45,12 @@ public class MyQuizzesPageTest extends BaseTest {
     @Test
     @DisplayName("Delete quiz after logging in")
     public void testDeleteQuizAfterLogin() {
-        myQuizzesPage.deleteQuiz(dotenv.get("QUIZ_TITLE_6"));
+        createNewQuiz("Quiz to delete", "The Question", "42", true, "33", false);
+        assertTrue(assertQuizDivContainsText("Quiz to delete"));
+        mainPage.clickMyQuizzes();
+
+        myQuizzesPage.deleteQuiz("Quiz to delete");
+        mainPage.clickAllQuizzes();
         assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_6")));
     }
 
