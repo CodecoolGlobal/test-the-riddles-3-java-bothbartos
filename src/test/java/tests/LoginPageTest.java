@@ -7,6 +7,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 public class LoginPageTest extends BaseTest{
 
     @BeforeEach
@@ -47,6 +49,14 @@ public class LoginPageTest extends BaseTest{
 
         assertLogoutButtonIsPresent();
         driver.quit();
+    }
+
+    @Test
+    @DisplayName("Login with valid credentials then write /login in url")
+    public void testLoginWithValidCredentialsThenWriteLoginInUrl() {
+        loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
+        driver.get(baseUrl + "login");
+        assertFalse(loginPage.isLoginButtonPresent());
     }
 
 
