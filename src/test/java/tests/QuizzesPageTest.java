@@ -8,7 +8,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class QuizzesPageTest extends BaseTest {
 
     @BeforeEach
-    public void setup(){
+    public void setupTest(){
+        initializeDriver();
+        driver.get(baseUrl);
+        driver.manage().window().maximize();
+
         mainPage.clickLogin();
         loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
         mainPage.clickAllQuizzes();
