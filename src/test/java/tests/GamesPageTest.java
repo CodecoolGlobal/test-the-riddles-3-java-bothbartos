@@ -64,14 +64,11 @@ class GamesPageTest extends BaseTest {
     }
 
 
-    private void startNewGame(){
-        mainPage.clickMyQuizzes();
-        quizFormPage.createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_1"));
-        answerFormPage.enterFirstAnswer(dotenv.get("QUIZ_1_ANSWER_1"), true);
-        answerFormPage.enterSecondAnswer(dotenv.get("QUIZ_1_ANSWER_2"), false);
+    private void startNewGame() {
 
-        quizFormPage.clickSaveQuizButton();
-        handleConfirmationAlert(true);
+        mainPage.clickMyQuizzes();
+
+        createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_1"), dotenv.get("QUIZ_1_ANSWER_1"), true, dotenv.get("QUIZ_1_ANSWER_2"), false);
 
         mainPage.clickMyQuizzes();
 
