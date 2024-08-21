@@ -12,13 +12,26 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class QuizFormPageTest extends BaseTest{
 
-    @Test
-    @DisplayName("Create new quiz after logging in")
-    @Order(1)
-    public void createNewQuizWithLoggingInTest(){
+    @BeforeEach
+    public void beforeEach() {
+        initializeDriver();
+        driver.get(baseUrl);
+        driver.manage().window().maximize();
+
         mainPage.clickLogin();
         loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
         mainPage.clickMyQuizzes();
+    }
+
+    @AfterEach
+    public void afterEach() {
+        mainPage.clickLogout();
+        driver.close();
+    }
+
+    @Test
+    @DisplayName("Create new quiz after logging in")
+    public void createNewQuizWithLoggingInTest(){
 
         myQuizzesPage.clickOnAddQuiz();
         quizFormPage.enterQuizTitle(dotenv.get("QUIZ_TITLE_1"));
@@ -31,25 +44,20 @@ public class QuizFormPageTest extends BaseTest{
 
         mainPage.clickAllQuizzes();
         assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1")));
-        mainPage.clickLogout();
     }
 
     @Test
     @DisplayName("Create new quiz without logging in")
-    @Order(2)
     public void createNewQuizWithoutLoggingInTest(){
+        mainPage.clickLogout();
         mainPage.clickMyQuizzes();
+        myQuizzesPage.clickOnAddQuiz();
         assertCorrectUrl(baseUrl + "login");
     }
 
     @Test
     @DisplayName("Create new quiz then add a question to it")
-    @Order(3)
     public void createNewQuizThenAddQuestionToItTest(){
-        mainPage.clickLogin();
-        loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
-        mainPage.clickMyQuizzes();
-
         quizFormPage.createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_1"));
 
         answerFormPage.clickOnAddOptionButton();
@@ -65,10 +73,7 @@ public class QuizFormPageTest extends BaseTest{
 
     @Test
     @DisplayName("Create new quiz then add every answer option")
-    @Order(4)
     public void createNewQuizThenAddEveryAnswerOptionTest(){
-        mainPage.clickMyQuizzes();
-
         quizFormPage.createNewQuiz(dotenv.get("QUIZ_TITLE_2"), dotenv.get("QUIZ_QUESTION_2"));
 
         answerFormPage.clickOnAddOptionButton();
@@ -91,10 +96,7 @@ public class QuizFormPageTest extends BaseTest{
 
     @Test
     @DisplayName("Create quiz without correct answer checkbox checked")
-    @Order(5)
     public void createNewQuizWithoutCorrectAnswerCheckboxCheckedTest(){
-        mainPage.clickMyQuizzes();
-
         quizFormPage.createNewQuiz(dotenv.get("QUIZ_TITLE_3"), dotenv.get("QUIZ_QUESTION_3"));
         answerFormPage.enterFirstAnswer(dotenv.get("QUIZ_2_ANSWER_1"), false);
         answerFormPage.enterSecondAnswer(dotenv.get("QUIZ_2_ANSWER_2"), false);
@@ -109,9 +111,7 @@ public class QuizFormPageTest extends BaseTest{
 
     @Test
     @DisplayName("Choose multiple correct answers")
-    @Order(6)
     public void chooseMultipleCorrectAnswersTest(){
-        mainPage.clickMyQuizzes();
         quizFormPage.createNewQuiz(dotenv.get("QUIZ_TITLE_4"), dotenv.get("QUIZ_QUESTION_4"));
         answerFormPage.enterFirstAnswer(dotenv.get("QUIZ_4_ANSWER_1"), true);
         answerFormPage.enterSecondAnswer(dotenv.get("QUIZ_4_ANSWER_2"), true);
@@ -119,7 +119,7 @@ public class QuizFormPageTest extends BaseTest{
         answerFormPage.clickSaveQuestionButton();
         handleConfirmationAlert(true);
         quizFormPage.clickSaveQuizButton();
-        handleConfirmationAlert(true);
+        //handleConfirmationAlert(true);
 
         driver.get(baseUrl + "quiz/my");
 
@@ -130,10 +130,7 @@ public class QuizFormPageTest extends BaseTest{
 
     @Test
     @DisplayName("Edit quiz title")
-    @Order(7)
     public void editQuizTitleTest(){
-        mainPage.clickMyQuizzes();
-
         myQuizzesPage.editQuiz(dotenv.get("QUIZ_TITLE_1"));
 
         quizFormPage.enterQuizTitle(dotenv.get("QUIZ_TITLE_2"));
@@ -143,11 +140,9 @@ public class QuizFormPageTest extends BaseTest{
        assertTrue(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_2")));
     }
 
-    @Order(8)
     @Test
     @DisplayName("user can delete quiz from editor")
     void userCanDeleteQuizFromEditorTest(){
-        mainPage.clickMyQuizzes();
         myQuizzesPage.clickOnAddQuiz();
         quizFormPage.enterQuizTitle("My Quiz");
         quizFormPage.clickSaveQuizButton();
@@ -159,12 +154,10 @@ public class QuizFormPageTest extends BaseTest{
         assertFalse(assertQuizDivContainsText("My Quiz"));
     }
 
-    @Order(9)
     @Test
     @DisplayName("user can edit the quiz")
     void userCanEditTheQuizTest(){
 
-        mainPage.clickMyQuizzes();
         myQuizzesPage.clickOnAddQuiz();
         quizFormPage.enterQuizTitle("My Quiz");
         quizFormPage.clickSaveQuizButton();
@@ -179,11 +172,9 @@ public class QuizFormPageTest extends BaseTest{
         myQuizzesPage.deleteQuiz("Modified Quiz");
     }
 
-    @Order(10)
     @Test
     @DisplayName("user can create quiz with empty boxes")
     void userCanCreateQuizWithEmptyBoxesTest(){
-        mainPage.clickMyQuizzes();
         myQuizzesPage.clickOnAddQuiz();
         quizFormPage.enterQuizTitle("My Quiz");
         quizFormPage.clickSaveQuizButton();
@@ -203,7 +194,6 @@ public class QuizFormPageTest extends BaseTest{
         myQuizzesPage.deleteQuiz("");
     }
 
-    @Order(11)
     @ParameterizedTest
     @MethodSource("timeCredentials")
     @DisplayName("user can add various time intervals")
@@ -215,7 +205,6 @@ public class QuizFormPageTest extends BaseTest{
             String answerText2,
             String expected
     ){
-        mainPage.clickMyQuizzes();
         myQuizzesPage.clickOnAddQuiz();
         quizFormPage.enterQuizTitle(quizTitle);
         quizFormPage.clickSaveQuizButton();
@@ -240,6 +229,5 @@ public class QuizFormPageTest extends BaseTest{
     public static Stream<Arguments> timeCredentials() {
         return CredentialsLoader.loadTimeCredentials();
     }
-
 
 }

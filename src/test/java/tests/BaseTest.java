@@ -68,12 +68,6 @@ public abstract class BaseTest {
         quizzesPage = new QuizzesPage(driver, wait);
     }
 
-    @BeforeEach
-    public void openBrowser() {
-        driver.get(baseUrl);
-        driver.manage().window().maximize();
-    }
-
     protected void logoutIfNotLoggedIn(){
         try{
             driver.findElement(By.xpath("//*[text()='Logout']"));
