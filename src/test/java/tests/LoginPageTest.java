@@ -1,19 +1,10 @@
 package tests;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import io.github.cdimascio.dotenv.Dotenv;
+
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import pages.LoginPage;
-import pages.MainPage;
-
-import java.time.Duration;
 import java.util.stream.Stream;
 
 public class LoginPageTest extends BaseTest{
@@ -41,7 +32,7 @@ public class LoginPageTest extends BaseTest{
     @DisplayName("User stays logged in after closing and opening browser")
     public void testLoginAfterClose() {
         driver.quit();
-        options.addArguments("user-data-dir=/tmp/tarun");
+        options.addArguments("user-data-dir="+ dotenv.get("TEMP_FOLDER"));
         initializeDriver();
         driver.get(baseUrl + "login");
         driver.manage().window().maximize();
