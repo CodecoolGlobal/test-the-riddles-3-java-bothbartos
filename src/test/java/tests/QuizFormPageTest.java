@@ -44,6 +44,7 @@ public class QuizFormPageTest extends BaseTest{
 
         mainPage.clickAllQuizzes();
         assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1")));
+        mainPage.clickLogout();
     }
 
     @Test

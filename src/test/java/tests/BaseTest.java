@@ -68,7 +68,7 @@ public abstract class BaseTest {
         quizzesPage = new QuizzesPage(driver, wait);
     }
 
-    protected void logoutIfNotLoggedIn(){
+    protected void logoutIfLoggedIn(){
         try{
             driver.findElement(By.xpath("//*[text()='Logout']"));
             mainPage.clickLogout();
@@ -158,5 +158,15 @@ public abstract class BaseTest {
         mainPage.clickMyQuizzes();
         myQuizzesPage.deleteAllQuizzes();
         mainPage.clickLogout();
+    }
+    protected void createNewQuiz(String title, String question, String answer1,boolean isAnswer1Correct, String answer2, boolean isAnswer2Correct){
+        myQuizzesPage.clickOnAddQuiz();
+        quizFormPage.enterQuizTitle(title);
+        quizFormPage.clickOnAddQuestionButton();
+        quizFormPage.enterQuestion(question);
+        answerFormPage.enterFirstAnswer(answer1, isAnswer1Correct);
+        answerFormPage.enterSecondAnswer(answer2, isAnswer2Correct);
+        quizFormPage.clickSaveQuizButton();
+        handleConfirmationAlert(true);
     }
 }
