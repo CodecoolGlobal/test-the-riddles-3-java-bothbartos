@@ -66,6 +66,14 @@ public abstract class BaseTest {
             driver.quit();
         }
     }
+    protected void logoutIfNotLoggedIn(){
+        try{
+            driver.findElement(By.xpath("//*[text()='Logout']"));
+            mainPage.clickLogout();
+        } catch (Exception e){
+            System.out.println("You are not logged in");
+        }
+    }
 
     protected boolean waitForUrlToBe(String url) {
         try {
