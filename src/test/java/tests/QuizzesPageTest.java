@@ -7,12 +7,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class QuizzesPageTest extends BaseTest {
 
-    @BeforeEach
-    public void setup(){
-        mainPage.clickLogin();
-        loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
-        mainPage.clickAllQuizzes();
-    }
 
     @Test
     @DisplayName("Edit button only clickable when logged in")

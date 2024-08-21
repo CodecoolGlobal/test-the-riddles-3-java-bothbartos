@@ -68,12 +68,6 @@ public abstract class BaseTest {
         quizzesPage = new QuizzesPage(driver, wait);
     }
 
-    @BeforeEach
-    public void openBrowser() {
-        driver.get(baseUrl);
-        driver.manage().window().maximize();
-    }
-
     protected void logoutIfNotLoggedIn(){
         try{
             driver.findElement(By.xpath("//*[text()='Logout']"));
@@ -131,7 +125,7 @@ public abstract class BaseTest {
                 }
             }
         }catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Couldn't find quiz div");
             return false;
         }
         return false;
@@ -151,10 +145,9 @@ public abstract class BaseTest {
         }
     }
 
-    private static void deleteAllQuizzes(){
-        if(mainPage.isLoggedIn()){
-            mainPage.clickLogout();
-        }
+    public void deleteAllQuizzes(){
+        driver.get(baseUrl);
+        logoutIfNotLoggedIn();
         mainPage.clickLogin();
         loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
         mainPage.clickMyQuizzes();

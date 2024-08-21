@@ -63,12 +63,4 @@ public class MainPage {
         reptileRiddles.click();
     }
 
-    public boolean isLoggedIn() {
-        try {
-            logout.isDisplayed();
-            return true;
-        }catch (Exception e) {
-            return false;
-        }
-    }
 }
