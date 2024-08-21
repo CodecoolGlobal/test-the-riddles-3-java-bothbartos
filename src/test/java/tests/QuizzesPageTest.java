@@ -59,5 +59,6 @@ class QuizzesPageTest extends BaseTest {
     @AfterEach
     public void teardown(){
         logoutIfLoggedIn();
+        driver.close();
     }
 }
