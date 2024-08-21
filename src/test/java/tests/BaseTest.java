@@ -125,7 +125,7 @@ public abstract class BaseTest {
                 }
             }
         }catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Couldn't find quiz div");
             return false;
         }
         return false;
@@ -145,10 +145,9 @@ public abstract class BaseTest {
         }
     }
 
-    private static void deleteAllQuizzes(){
-        if(mainPage.isLoggedIn()){
-            mainPage.clickLogout();
-        }
+    public void deleteAllQuizzes(){
+        driver.get(baseUrl);
+        logoutIfLoggedIn();
         mainPage.clickLogin();
         loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
         mainPage.clickMyQuizzes();
