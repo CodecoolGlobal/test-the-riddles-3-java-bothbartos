@@ -2,9 +2,8 @@ package tests;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -33,7 +32,6 @@ public abstract class BaseTest {
     protected static AnswerForm answerFormPage;
     protected static GamesPage gamesPage;
     protected static QuizzesPage quizzesPage;
-
 
     @BeforeAll
     public static void setup() {
@@ -68,6 +66,21 @@ public abstract class BaseTest {
         quizFormPage = new QuizFormPage(driver, wait, answerFormPage);
         gamesPage = new GamesPage(driver, wait);
         quizzesPage = new QuizzesPage(driver, wait);
+    }
+
+    @BeforeEach
+    public void openBrowser() {
+        driver.get(baseUrl);
+        driver.manage().window().maximize();
+    }
+
+    protected void logoutIfNotLoggedIn(){
+        try{
+            driver.findElement(By.xpath("//*[text()='Logout']"));
+            mainPage.clickLogout();
+        } catch (Exception e){
+            System.out.println("You are not logged in");
+        }
     }
 
     protected boolean waitForUrlToBe(String url) {

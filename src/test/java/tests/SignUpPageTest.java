@@ -20,7 +20,6 @@ public class SignUpPageTest extends BaseTest {
         driver.get(baseUrl + "register");
     }
 
-    @Order(1)
     @Test
     @DisplayName("Register with empty credentials")
     public void testSignUpPageWithEmptyCredentials() {
@@ -31,7 +30,6 @@ public class SignUpPageTest extends BaseTest {
         assertTrue(isAlertPresent());
     }
 
-    @Order(2)
     @ParameterizedTest
     @MethodSource("credentialsProvider")
     public void testSignUpPage(String username, String email, String password) {
@@ -44,7 +42,6 @@ public class SignUpPageTest extends BaseTest {
         assertCorrectUrl(baseUrl + "login");
     }
 
-    @Order(3)
     @Test
     @DisplayName("Register with in-use username, email, password")
     public void testSignUpPageWithInUseUsername() {
