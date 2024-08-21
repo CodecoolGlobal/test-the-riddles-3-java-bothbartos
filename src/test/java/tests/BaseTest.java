@@ -2,8 +2,8 @@ package tests;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -34,14 +34,29 @@ public abstract class BaseTest {
     protected static QuizzesPage quizzesPage;
 
     @BeforeAll
-    public static void setUp() {
-        options = new ChromeOptions();
-        options.addArguments("--disable-search-engine-choice-screen");
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    public static void setup() {
         dotenv = Dotenv.load();
         baseUrl = dotenv.get("ROOT_URL");
+    }
+
+    @BeforeEach
+    public void before() {
+        options = new ChromeOptions();
+        options.addArguments("--disable-search-engine-choice-screen");
+    }
+
+    @AfterEach
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+
+    public static void initializeDriver() {
+        WebDriverManager.chromedriver().setup();
+
+        driver = new ChromeDriver(options);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
         mainPage = new MainPage(driver, wait);
         loginPage = new LoginPage(driver, wait);
@@ -59,13 +74,6 @@ public abstract class BaseTest {
         driver.manage().window().maximize();
     }
 
-    @AfterAll
-    public static void tearDown() {
-        deleteAllQuizzes();
-        if (driver != null) {
-            driver.quit();
-        }
-    }
     protected void logoutIfNotLoggedIn(){
         try{
             driver.findElement(By.xpath("//*[text()='Logout']"));
