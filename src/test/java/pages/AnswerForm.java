@@ -64,6 +64,7 @@ public class AnswerForm {
         wait.until(ExpectedConditions.elementToBeClickable(addOptionButton));
         addOptionButton.click();
     }
+
     public void enterAnswer(WebElement answerField, WebElement checkbox, String answer, boolean isRight) {
         wait.until(ExpectedConditions.visibilityOf(answerField));
         answerField.sendKeys(answer);
@@ -72,6 +73,7 @@ public class AnswerForm {
             checkbox.click();
         }
     }
+
     public void enterFirstAnswer(String answer, boolean isRight) {
         wait.until(ExpectedConditions.visibilityOf(firstAnswerField));
         firstAnswerField.sendKeys(answer);
@@ -80,6 +82,7 @@ public class AnswerForm {
             firstCheckBox.click();
         }
     }
+
     public void enterSecondAnswer(String answer, boolean isRight) {
         wait.until(ExpectedConditions.visibilityOf(secondAnswerField));
         secondAnswerField.sendKeys(answer);
@@ -88,6 +91,7 @@ public class AnswerForm {
             secondCheckBox.click();
         }
     }
+
     public void enterThirdAnswer(String answer, boolean isRight) {
         wait.until(ExpectedConditions.visibilityOf(thirdAnswerField));
         thirdAnswerField.sendKeys(answer);
@@ -96,6 +100,7 @@ public class AnswerForm {
             thirdCheckBox.click();
         }
     }
+
     public void enterFourthAnswer(String answer, boolean isRight) {
         wait.until(ExpectedConditions.visibilityOf(fourthAnswerField));
         fourthAnswerField.sendKeys(answer);
@@ -104,6 +109,7 @@ public class AnswerForm {
             fourthCheckBox.click();
         }
     }
+
     public void enterFifthAnswer(String answer, boolean isRight) {
         wait.until(ExpectedConditions.visibilityOf(fifthAnswerField));
         fifthAnswerField.sendKeys(answer);
@@ -112,6 +118,7 @@ public class AnswerForm {
             fifthCheckBox.click();
         }
     }
+
     public void enterSixthAnswer(String answer, boolean isRight) {
         wait.until(ExpectedConditions.visibilityOf(sixthAnswerField));
         sixthAnswerField.sendKeys(answer);
@@ -127,7 +134,7 @@ public class AnswerForm {
     }
 
 
-    public void setTimer(String time){
+    public void setTimer(String time) {
         wait.until(ExpectedConditions.visibilityOf(timer));
         timer.clear();
         timer.sendKeys(time);
@@ -138,28 +145,37 @@ public class AnswerForm {
         questionButton.click();
     }
 
-    public String getTimerText(){
+    public String getTimerText() {
         wait.until(ExpectedConditions.visibilityOf(timer));
-        return  timer.getAttribute("value");
+        return timer.getAttribute("value");
     }
 
-    public boolean isFirstTwoCheckboxesChecked(){
+    public boolean isFirstTwoCheckboxesChecked() {
         return wait.until(ExpectedConditions.elementToBeClickable(firstCheckBox)).isSelected() && wait.until(ExpectedConditions.elementToBeClickable(secondCheckBox)).isSelected();
     }
+
     public void enterAnswers(Map<String, Boolean> answers) {
-        Map<WebElement, WebElement> answerElements = new LinkedHashMap<>();
-        answerElements.put(firstAnswerField, firstCheckBox);
-        answerElements.put(secondAnswerField, secondCheckBox);
-        answerElements.put(thirdAnswerField, thirdCheckBox);
-        answerElements.put(fourthAnswerField, fourthCheckBox);
-        answerElements.put(sixthAnswerField, sixthCheckBox);
-        int i = 0;
-        for (Map.Entry<String, Boolean> entry : answers.entrySet()) {
-            String answer = entry.getKey();
-            boolean isCorrect = entry.getValue();
-            WebElement answerField = (WebElement) answerElements.keySet().toArray()[i];
-            WebElement checkBox = (WebElement) answerElements.values().toArray()[i];
-            enterAnswer(answerField, checkBox, answer, isCorrect);
+        List<WebElement> answerFields = new LinkedList<>();
+        answerFields.add(firstAnswerField);
+        answerFields.add(secondAnswerField);
+        answerFields.add(thirdAnswerField);
+        answerFields.add(fourthAnswerField);
+        answerFields.add(fifthAnswerField);
+        answerFields.add(sixthAnswerField);
+        List<WebElement> checkboxFields = new LinkedList<>();
+        checkboxFields.add(firstCheckBox);
+        checkboxFields.add(secondCheckBox);
+        checkboxFields.add(thirdCheckBox);
+        checkboxFields.add(fourthCheckBox);
+        checkboxFields.add(fifthCheckBox);
+        checkboxFields.add(sixthCheckBox);
+
+        for (int i = 0; i < answers.size(); i++) {
+            WebElement answerField = answerFields.get(i);
+            WebElement checkboxField = checkboxFields.get(i);
+            String answer = (String) answers.keySet().toArray()[i];
+            boolean isCorrect = answers.get(answer);
+            enterAnswer(answerField, checkboxField, answer, isCorrect);
         }
     }
 }
