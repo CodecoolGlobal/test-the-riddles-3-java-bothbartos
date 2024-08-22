@@ -21,17 +21,6 @@ class GamesPageTest extends BaseTest {
         loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
     }
 
-    @AfterEach
-    public void tearDown() {
-        try{
-            deleteAllQuizzes();
-        }catch (Exception e){
-            System.out.println("Error deleting quizzes");
-        }
-        if(driver !=null){
-            driver.quit();
-        }
-    }
 
     @Test
     @DisplayName("Start new quiz game")
@@ -85,7 +74,7 @@ class GamesPageTest extends BaseTest {
         mainPage.clickGames();
 
         assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1")));
-        deleteAllQuizzes();
+        deleteQuizzes();
     }
 
 
