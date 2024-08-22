@@ -7,6 +7,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.*;
+
 public class AnswerForm {
     private WebDriverWait wait;
     private WebDriver driver;
@@ -61,6 +63,14 @@ public class AnswerForm {
     public void clickOnAddOptionButton() {
         wait.until(ExpectedConditions.elementToBeClickable(addOptionButton));
         addOptionButton.click();
+    }
+    public void enterAnswer(WebElement answerField, WebElement checkbox, String answer, boolean isRight) {
+        wait.until(ExpectedConditions.visibilityOf(answerField));
+        answerField.sendKeys(answer);
+        if (isRight) {
+            wait.until(ExpectedConditions.visibilityOf(checkbox));
+            checkbox.click();
+        }
     }
     public void enterFirstAnswer(String answer, boolean isRight) {
         wait.until(ExpectedConditions.visibilityOf(firstAnswerField));
@@ -136,5 +146,20 @@ public class AnswerForm {
     public boolean isFirstTwoCheckboxesChecked(){
         return wait.until(ExpectedConditions.elementToBeClickable(firstCheckBox)).isSelected() && wait.until(ExpectedConditions.elementToBeClickable(secondCheckBox)).isSelected();
     }
-
+    public void enterAnswers(Map<String, Boolean> answers) {
+        Map<WebElement, WebElement> answerElements = new LinkedHashMap<>();
+        answerElements.put(firstAnswerField, firstCheckBox);
+        answerElements.put(secondAnswerField, secondCheckBox);
+        answerElements.put(thirdAnswerField, thirdCheckBox);
+        answerElements.put(fourthAnswerField, fourthCheckBox);
+        answerElements.put(sixthAnswerField, sixthCheckBox);
+        int i = 0;
+        for (Map.Entry<String, Boolean> entry : answers.entrySet()) {
+            String answer = entry.getKey();
+            boolean isCorrect = entry.getValue();
+            WebElement answerField = (WebElement) answerElements.keySet().toArray()[i];
+            WebElement checkBox = (WebElement) answerElements.values().toArray()[i];
+            enterAnswer(answerField, checkBox, answer, isCorrect);
+        }
+    }
 }
