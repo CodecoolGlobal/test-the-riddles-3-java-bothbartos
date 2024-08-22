@@ -21,6 +21,8 @@ public class MyQuizzesPage {
     private WebElement createGameLobbyButton;
     @FindBy(xpath = "//button[text()='Start']")
     private WebElement startGameButton;
+    @FindBy(xpath = "//button[text()=':(']")
+    private WebElement notValidGameButton;
 
     public MyQuizzesPage(WebDriver driver, WebDriverWait wait) {
         PageFactory.initElements(driver, this);
@@ -88,6 +90,17 @@ public class MyQuizzesPage {
             alert.accept();
         } else {
             alert.dismiss();
+        }
+    }
+
+    public void startInvalidGame(String title){
+        WebElement quiz = getQuizByTitle(title);
+        if (quiz != null) {
+            WebElement playButton = quiz.findElement(By.xpath("//button[text()='Play']"));
+            playButton.click();
+            wait.until(ExpectedConditions.elementToBeClickable(createGameLobbyButton)).click();
+            wait.until(ExpectedConditions.elementToBeClickable(notValidGameButton)).click();
+
         }
     }
 

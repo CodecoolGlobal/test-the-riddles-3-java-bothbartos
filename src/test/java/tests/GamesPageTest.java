@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -61,6 +62,27 @@ class GamesPageTest extends BaseTest {
         gamesPage.clickJoinGameByName(dotenv.get("QUIZ_TITLE_1"));
         gamesPage.renamePlayer("PLAYER");
         assertTrue(wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[text()='Good luck!']"))).isDisplayed());
+    }
+
+    @Test
+    @DisplayName("Create a new invalid quiz, then try to start a new game")
+    public void createInvalidQuizThenStartNewGameTest() {
+        mainPage.clickMyQuizzes();
+
+        myQuizzesPage.clickOnAddQuiz();
+
+        quizFormPage.enterQuizTitle(dotenv.get("QUIZ_TITLE_1"));
+        quizFormPage.clickSaveQuizButton();
+        handleConfirmationAlert(true);
+
+        mainPage.clickMyQuizzes();
+
+        myQuizzesPage.startInvalidGame(dotenv.get("QUIZ_TITLE_1"));
+
+        mainPage.clickGames();
+
+        assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1")));
+        deleteAllQuizzes();
     }
 
 
