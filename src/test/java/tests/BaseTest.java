@@ -187,7 +187,7 @@ public abstract class BaseTest {
         quizFormPage.enterQuestion(question);
         answerFormPage.enterAnswers(options);
         answerFormPage.setTimer(timeout);
-        if (options.size() > 2) {
+        if (options.size() >= 2) {
             answerFormPage.clickSaveQuestionButton();
             handleConfirmationAlert(true);
         }

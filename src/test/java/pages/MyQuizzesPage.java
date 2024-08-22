@@ -9,6 +9,7 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -52,14 +53,14 @@ public class MyQuizzesPage {
     public void editQuiz(String title) {
         WebElement quiz = getQuizByTitle(title);
         if (quiz != null) {
-            WebElement editButton = wait.until(ExpectedConditions.elementToBeClickable(quiz.findElement(By.xpath(".//button[text()='Edit']"))));
+            WebElement editButton = wait.until(ExpectedConditions.visibilityOf(quiz.findElement(By.xpath(".//button[text()='Edit']"))));
             editButton.click();
         }
     }
     public void deleteQuiz(String title) {
         WebElement quiz = getQuizByTitle(title);
         if (quiz != null) {
-            WebElement deleteButton = quiz.findElement(By.xpath("//button[text()='Delete']"));
+            WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(quiz.findElement(By.xpath("//button[text()='Delete']"))));
             deleteButton.click();
             handleConfirmationAlert(true);
         }
