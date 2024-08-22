@@ -48,7 +48,7 @@ public class QuizFormPageTest extends BaseTest{
     }
 
     @Test
-    @DisplayName("Create new quiz without logging in")
+    @DisplayName("Create new quiz without logging in is not possible")
     public void createNewQuizWithoutLoggingInTest(){
        mainPage.clickLogout();
        mainPage.clickMyQuizzes();
