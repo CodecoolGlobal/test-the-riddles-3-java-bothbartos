@@ -43,6 +43,8 @@ public abstract class BaseTest {
     public void before() {
         options = new ChromeOptions();
         options.addArguments("--disable-search-engine-choice-screen");
+        options.addArguments("--disable-infobars");
+
     }
 
     @AfterEach

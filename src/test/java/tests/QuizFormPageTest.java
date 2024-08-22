@@ -25,7 +25,7 @@ public class QuizFormPageTest extends BaseTest{
 
     @AfterEach
     public void afterEach() {
-        mainPage.clickLogout();
+        logoutIfLoggedIn();
         driver.close();
     }
 
@@ -52,7 +52,6 @@ public class QuizFormPageTest extends BaseTest{
     public void createNewQuizWithoutLoggingInTest(){
         mainPage.clickLogout();
         mainPage.clickMyQuizzes();
-        myQuizzesPage.clickOnAddQuiz();
         assertCorrectUrl(baseUrl + "login");
     }
 
@@ -88,7 +87,8 @@ public class QuizFormPageTest extends BaseTest{
         answerFormPage.enterFourthAnswer(dotenv.get("QUIZ_2_ANSWER_4"), false);
         answerFormPage.enterFifthAnswer(dotenv.get("QUIZ_2_ANSWER_5"), false);
         answerFormPage.enterSixthAnswer(dotenv.get("QUIZ_2_ANSWER_6"), false);
-
+        answerFormPage.clickSaveQuestionButton();
+        handleConfirmationAlert(true);
         quizFormPage.clickSaveQuizButton();
         handleConfirmationAlert(true);
 
@@ -120,7 +120,7 @@ public class QuizFormPageTest extends BaseTest{
         answerFormPage.clickSaveQuestionButton();
         handleConfirmationAlert(true);
         quizFormPage.clickSaveQuizButton();
-        //handleConfirmationAlert(true);
+        handleConfirmationAlert(true);
 
         driver.get(baseUrl + "quiz/my");
 
