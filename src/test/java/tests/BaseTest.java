@@ -173,8 +173,10 @@ public abstract class BaseTest {
         quizFormPage.clickOnAddQuestionButton();
         quizFormPage.enterQuestion(question);
         answerFormPage.enterAnswers(options);
-        answerFormPage.clickSaveQuestionButton();
-        handleConfirmationAlert(true);
+        if (options.size() > 2) {
+            answerFormPage.clickSaveQuestionButton();
+            handleConfirmationAlert(true);
+        }
         quizFormPage.clickSaveQuizButton();
         handleConfirmationAlert(true);
     }

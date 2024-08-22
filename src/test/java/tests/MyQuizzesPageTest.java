@@ -38,16 +38,12 @@ public class MyQuizzesPageTest extends BaseTest {
         mainPage.clickMyQuizzes();
         assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_5")));
     }
-
+    @DisplayName("Testing creating new quiz")
     @Test
     public void createQuiz() {
         Map<String, Boolean> answers = new HashMap<>();
         answers.put( dotenv.get("QUIZ_6_ANSWER_1"), true);
         answers.put( dotenv.get("QUIZ_6_ANSWER_2"), false);
-        answers.put(dotenv.get("QUIZ_6_ANSWER_3"), false);
-        answers.put(dotenv.get("QUIZ_6_ANSWER_4"), false);
-        answers.put(dotenv.get("QUIZ_6_ANSWER_5"), false);
-        answers.put(dotenv.get("QUIZ_6_ANSWER_6"), false);
         createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_6"), answers);
         assertCorrectUrl(baseUrl + "quiz/all");
     }
