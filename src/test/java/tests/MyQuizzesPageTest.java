@@ -2,7 +2,11 @@ package tests;
 
 import org.junit.jupiter.api.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MyQuizzesPageTest extends BaseTest {
@@ -34,17 +38,29 @@ public class MyQuizzesPageTest extends BaseTest {
         mainPage.clickMyQuizzes();
         assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_5")));
     }
-
+    @DisplayName("Testing creating new quiz")
     @Test
     public void createQuiz() {
-        createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_6"), dotenv.get("QUIZ_6_ANSWER_1"), true, dotenv.get("QUIZ_6_ANSWER_2"), false);
+        Map<String, Boolean> answers = new HashMap<>();
+        answers.put( dotenv.get("QUIZ_6_ANSWER_1"), true);
+        answers.put( dotenv.get("QUIZ_6_ANSWER_2"), false);
+        createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_6"), answers);
         assertCorrectUrl(baseUrl + "quiz/all");
     }
 
     @Test
     @DisplayName("Delete quiz after logging in")
     public void testDeleteQuizAfterLogin() {
-        myQuizzesPage.deleteQuiz(dotenv.get("QUIZ_TITLE_6"));
+        Map<String, Boolean> answers = new HashMap<>();
+        answers.put("42", true);
+        answers.put("33", false);
+
+        createNewQuiz("Quiz to delete", "The Question", answers);
+        assertTrue(assertQuizDivContainsText("Quiz to delete"));
+        mainPage.clickMyQuizzes();
+
+        myQuizzesPage.deleteQuiz("Quiz to delete");
+        mainPage.clickAllQuizzes();
         assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_6")));
     }
 

@@ -13,7 +13,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.*;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,6 +45,12 @@ public abstract class BaseTest {
     public void before() {
         options = new ChromeOptions();
         options.addArguments("--disable-search-engine-choice-screen");
+        options.setExperimentalOption("excludeSwitches", Arrays.asList("enable-automation"));
+
+        options.setExperimentalOption("prefs", Map.of(
+                "credentials_enable_service", false,
+                "profile.password_manager_enabled", false
+        ));
     }
 
     @AfterEach
@@ -68,11 +76,11 @@ public abstract class BaseTest {
         quizzesPage = new QuizzesPage(driver, wait);
     }
 
-    protected void logoutIfLoggedIn(){
-        try{
+    protected void logoutIfLoggedIn() {
+        try {
             driver.findElement(By.xpath("//*[text()='Logout']"));
             mainPage.clickLogout();
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("You are not logged in");
         }
     }
@@ -124,7 +132,7 @@ public abstract class BaseTest {
                     }
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Couldn't find quiz div");
             return false;
         }
@@ -145,7 +153,7 @@ public abstract class BaseTest {
         }
     }
 
-    public void deleteAllQuizzes(){
+    public void deleteAllQuizzes() {
         driver.get(baseUrl);
         logoutIfLoggedIn();
         mainPage.clickLogin();
@@ -158,14 +166,24 @@ public abstract class BaseTest {
         myQuizzesPage.deleteAllQuizzes();
         mainPage.clickLogout();
     }
-    protected void createNewQuiz(String title, String question, String answer1,boolean isAnswer1Correct, String answer2, boolean isAnswer2Correct){
+
+    protected void createNewQuiz(String title, String question, Map<String, Boolean> options) {
         myQuizzesPage.clickOnAddQuiz();
         quizFormPage.enterQuizTitle(title);
         quizFormPage.clickOnAddQuestionButton();
         quizFormPage.enterQuestion(question);
-        answerFormPage.enterFirstAnswer(answer1, isAnswer1Correct);
-        answerFormPage.enterSecondAnswer(answer2, isAnswer2Correct);
+        answerFormPage.enterAnswers(options);
+        if (options.size() > 2) {
+            answerFormPage.clickSaveQuestionButton();
+            handleConfirmationAlert(true);
+        }
         quizFormPage.clickSaveQuizButton();
         handleConfirmationAlert(true);
+    }
+
+    public void deleteQuizzes(){
+        driver.get(baseUrl);
+        mainPage.clickMyQuizzes();
+        myQuizzesPage.deleteAllQuizzes();
     }
 }

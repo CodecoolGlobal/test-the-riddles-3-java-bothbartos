@@ -25,7 +25,7 @@ public class QuizFormPageTest extends BaseTest{
 
     @AfterEach
     public void afterEach() {
-        mainPage.clickLogout();
+        logoutIfLoggedIn();
         driver.close();
     }
 
@@ -44,16 +44,17 @@ public class QuizFormPageTest extends BaseTest{
 
         mainPage.clickAllQuizzes();
         assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1")));
-        mainPage.clickLogout();
+        deleteQuizzes();
     }
 
     @Test
-    @DisplayName("Create new quiz without logging in")
+    @DisplayName("Create new quiz without logging in is not possible")
     public void createNewQuizWithoutLoggingInTest(){
-        mainPage.clickLogout();
-        mainPage.clickMyQuizzes();
-        myQuizzesPage.clickOnAddQuiz();
-        assertCorrectUrl(baseUrl + "login");
+       mainPage.clickLogout();
+       mainPage.clickMyQuizzes();
+       String actual = driver.getCurrentUrl();
+       assertEquals(baseUrl + "login", actual);
+       loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
     }
 
     @Test
@@ -70,6 +71,8 @@ public class QuizFormPageTest extends BaseTest{
         handleConfirmationAlert(true);
 
         assertTrue(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1")));
+        deleteQuizzes();
+
     }
 
     @Test
@@ -88,11 +91,14 @@ public class QuizFormPageTest extends BaseTest{
         answerFormPage.enterFourthAnswer(dotenv.get("QUIZ_2_ANSWER_4"), false);
         answerFormPage.enterFifthAnswer(dotenv.get("QUIZ_2_ANSWER_5"), false);
         answerFormPage.enterSixthAnswer(dotenv.get("QUIZ_2_ANSWER_6"), false);
-
+        answerFormPage.clickSaveQuestionButton();
+        handleConfirmationAlert(true);
         quizFormPage.clickSaveQuizButton();
         handleConfirmationAlert(true);
 
         assertTrue(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_2")));
+        deleteQuizzes();
+
     }
 
     @Test
@@ -108,6 +114,8 @@ public class QuizFormPageTest extends BaseTest{
         mainPage.clickAllQuizzes();
 
         assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_3")));
+        deleteQuizzes();
+
     }
 
     @Test
@@ -120,25 +128,33 @@ public class QuizFormPageTest extends BaseTest{
         answerFormPage.clickSaveQuestionButton();
         handleConfirmationAlert(true);
         quizFormPage.clickSaveQuizButton();
-        //handleConfirmationAlert(true);
+        handleConfirmationAlert(true);
 
         driver.get(baseUrl + "quiz/my");
 
         myQuizzesPage.editQuiz(dotenv.get("QUIZ_TITLE_4"));
 
         assertTrue(quizFormPage.isEveryCheckboxChecked());
+        deleteQuizzes();
+
     }
 
     @Test
     @DisplayName("Edit quiz title")
     public void editQuizTitleTest(){
+        myQuizzesPage.clickOnAddQuiz();
+        quizFormPage.enterQuizTitle(dotenv.get("QUIZ_TITLE_1"));
+        quizFormPage.clickSaveQuizButton();
+        handleConfirmationAlert(true);
+        driver.get(baseUrl + "quiz/my");
         myQuizzesPage.editQuiz(dotenv.get("QUIZ_TITLE_1"));
-
         quizFormPage.enterQuizTitle(dotenv.get("QUIZ_TITLE_2"));
         quizFormPage.clickSaveQuizButton();
         handleConfirmationAlert(true);
+        driver.get(baseUrl + "quiz/my");
+        assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_2"));
+        deleteQuizzes();
 
-       assertTrue(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_2")));
     }
 
     @Test
@@ -193,6 +209,8 @@ public class QuizFormPageTest extends BaseTest{
         assertFalse(assertQuizDivContainsText(""));
         driver.get("http://localhost:3000/quiz/my");
         myQuizzesPage.deleteQuiz("");
+        deleteQuizzes();
+
     }
 
     @ParameterizedTest
@@ -225,6 +243,8 @@ public class QuizFormPageTest extends BaseTest{
         answerFormPage.clickOnQuestionButton();
         String actual = answerFormPage.getTimerText();
         assertEquals(expected, actual);
+        deleteQuizzes();
+
     }
 
     public static Stream<Arguments> timeCredentials() {

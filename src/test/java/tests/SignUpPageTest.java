@@ -4,8 +4,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import pages.SignUpPage;
+
 
 import java.util.stream.Stream;
 
@@ -17,7 +16,9 @@ public class SignUpPageTest extends BaseTest {
 
     @BeforeEach
     public void navigateToSignUpPage() {
+        initializeDriver();
         driver.get(baseUrl + "register");
+        driver.manage().window().maximize();
     }
 
     @Test
