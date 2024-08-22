@@ -180,6 +180,20 @@ public abstract class BaseTest {
         quizFormPage.clickSaveQuizButton();
         handleConfirmationAlert(true);
     }
+    protected void createNewQuiz(String title, String question,String timeout, Map<String, Boolean> options) {
+        myQuizzesPage.clickOnAddQuiz();
+        quizFormPage.enterQuizTitle(title);
+        quizFormPage.clickOnAddQuestionButton();
+        quizFormPage.enterQuestion(question);
+        answerFormPage.enterAnswers(options);
+        answerFormPage.setTimer(timeout);
+        if (options.size() > 2) {
+            answerFormPage.clickSaveQuestionButton();
+            handleConfirmationAlert(true);
+        }
+        quizFormPage.clickSaveQuizButton();
+        handleConfirmationAlert(true);
+    }
 
     public void deleteQuizzes(){
         driver.get(baseUrl);
