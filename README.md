@@ -71,10 +71,10 @@ This repository contains automated UI tests for Reptile Riddles using Selenium W
 
 Before you begin, ensure you have met the following requirements:
 
-Java Development Kit (JDK): Version 8 or higher.
-Maven: Version 3.6.0 or higher.
-WebDriver Executables: ChromeDriver executables are installed.
-Created .env file in src/test/resources package with the following fields:
+- Java Development Kit (JDK): Version 8 or higher.
+- Maven: Version 3.6.0 or higher.
+- WebDriver Executables: ChromeDriver executables are installed.
+- Created .env file in src/test/resources package with the following fields:
 ```
 ROOT_URL=http://localhost:3000/
 TEMP_FOLDER=/tmp/tarun
@@ -143,11 +143,19 @@ QUIZ_6_ANSWER_2=
     mvn clean install
     ```
 
-## Running the tests
+## Running every test
  
 ```bash
 mvn -Dtest=OrderedTestSuite test
 ```
+
+## Running single test
+```bash
+mvn -Dtest=TestClassName test
+```
+
+
+
 
 
 ## User stories
