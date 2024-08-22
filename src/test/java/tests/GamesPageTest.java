@@ -4,6 +4,9 @@ import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -67,8 +70,10 @@ class GamesPageTest extends BaseTest {
     private void startNewGame() {
 
         mainPage.clickMyQuizzes();
-
-        createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_1"), dotenv.get("QUIZ_1_ANSWER_1"), true, dotenv.get("QUIZ_1_ANSWER_2"), false);
+        Map<String, Boolean> answers = new HashMap<>();
+        answers.put(dotenv.get("QUIZ_1_ANSWER_1"), true);
+        answers.put(dotenv.get("QUIZ_1_ANSWER_2"), false);
+        createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_1"), answers);
 
         mainPage.clickMyQuizzes();
 
