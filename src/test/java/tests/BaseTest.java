@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.*;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,12 @@ public abstract class BaseTest {
     public void before() {
         options = new ChromeOptions();
         options.addArguments("--disable-search-engine-choice-screen");
+        options.setExperimentalOption("excludeSwitches", Arrays.asList("enable-automation"));
+
+        options.setExperimentalOption("prefs", Map.of(
+                "credentials_enable_service", false,
+                "profile.password_manager_enabled", false
+        ));
     }
 
     @AfterEach
@@ -166,6 +173,8 @@ public abstract class BaseTest {
         quizFormPage.clickOnAddQuestionButton();
         quizFormPage.enterQuestion(question);
         answerFormPage.enterAnswers(options);
+        answerFormPage.clickSaveQuestionButton();
+        handleConfirmationAlert(true);
         quizFormPage.clickSaveQuizButton();
         handleConfirmationAlert(true);
     }

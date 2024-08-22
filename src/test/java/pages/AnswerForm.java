@@ -171,6 +171,9 @@ public class AnswerForm {
         checkboxFields.add(sixthCheckBox);
 
         for (int i = 0; i < answers.size(); i++) {
+            if (i > 1) {
+                clickOnAddOptionButton();
+            }
             WebElement answerField = answerFields.get(i);
             WebElement checkboxField = checkboxFields.get(i);
             String answer = (String) answers.keySet().toArray()[i];
