@@ -35,6 +35,8 @@ public class MyQuizzesPage {
         List<WebElement> quizDivs =  getQuizzes();
         for (WebElement quizTitle : quizDivs) {
             String quizTitleText = quizTitle.findElement(By.xpath("./span")).getText();
+            //TODO: delete later
+            System.out.println(quizTitleText);
             if (quizTitleText.equals(title)) {
                 return quizTitle;
             }

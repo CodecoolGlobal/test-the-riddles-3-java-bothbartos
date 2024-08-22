@@ -151,6 +151,8 @@ public class QuizFormPageTest extends BaseTest {
         createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_1"), answers);
 
         mainPage.clickMyQuizzes();
+        assertTrue(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1")));
+
         myQuizzesPage.editQuiz(dotenv.get("QUIZ_TITLE_1"));
         quizFormPage.clickOnDeleteButton();
         handleConfirmationAlert(true);
@@ -167,6 +169,8 @@ public class QuizFormPageTest extends BaseTest {
 
         createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_1"), answers);
         mainPage.clickMyQuizzes();
+
+        assertTrue(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1")));
 
         myQuizzesPage.editQuiz(dotenv.get("QUIZ_TITLE_1"));
         quizFormPage.enterQuizTitle("Modified Quiz");
@@ -213,6 +217,9 @@ public class QuizFormPageTest extends BaseTest {
         createNewQuiz(quizTitle, questionText, timeIntervalText, answers);
 
         mainPage.clickMyQuizzes();
+
+        assertTrue(assertQuizDivContainsText(quizTitle));
+
         myQuizzesPage.editQuiz(quizTitle);
         answerFormPage.clickOnQuestionButton();
         String actual = answerFormPage.getTimerText();
