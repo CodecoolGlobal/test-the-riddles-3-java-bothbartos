@@ -160,6 +160,7 @@ public abstract class BaseTest {
         myQuizzesPage.deleteAllQuizzes();
         mainPage.clickLogout();
     }
+
     protected void createNewQuiz(String title, String question, String answer1,boolean isAnswer1Correct, String answer2, boolean isAnswer2Correct){
         myQuizzesPage.clickOnAddQuiz();
         quizFormPage.enterQuizTitle(title);
@@ -169,5 +170,11 @@ public abstract class BaseTest {
         answerFormPage.enterSecondAnswer(answer2, isAnswer2Correct);
         quizFormPage.clickSaveQuizButton();
         handleConfirmationAlert(true);
+    }
+
+    public void deleteQuizzes(){
+        driver.get(baseUrl);
+        mainPage.clickMyQuizzes();
+        myQuizzesPage.deleteAllQuizzes();
     }
 }
