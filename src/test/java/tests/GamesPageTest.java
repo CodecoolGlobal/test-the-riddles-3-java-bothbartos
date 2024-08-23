@@ -7,6 +7,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -20,17 +21,6 @@ class GamesPageTest extends BaseTest {
         loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
     }
 
-    @AfterEach
-    public void tearDown() {
-        try{
-            deleteAllQuizzes();
-        }catch (Exception e){
-            System.out.println("Error deleting quizzes");
-        }
-        if(driver !=null){
-            driver.quit();
-        }
-    }
 
     @Test
     @DisplayName("Start new quiz game")
@@ -38,6 +28,8 @@ class GamesPageTest extends BaseTest {
         startNewGame();
 
         assertUrlContains("game/lobby/");
+
+        deleteQuizzes();
 
     }
 
@@ -51,6 +43,8 @@ class GamesPageTest extends BaseTest {
         mainPage.clickGames();
         gamesPage.clickJoinGameByName(dotenv.get("QUIZ_TITLE_1"));
         assertUrlContains("game/quiz");
+
+        deleteQuizzes();
     }
 
     @Test
@@ -64,6 +58,28 @@ class GamesPageTest extends BaseTest {
         gamesPage.clickJoinGameByName(dotenv.get("QUIZ_TITLE_1"));
         gamesPage.renamePlayer("PLAYER");
         assertTrue(wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[text()='Good luck!']"))).isDisplayed());
+        deleteQuizzes();
+    }
+
+    @Test
+    @DisplayName("Create a new invalid quiz, then try to start a new game")
+    public void createInvalidQuizThenStartNewGameTest() {
+        mainPage.clickMyQuizzes();
+
+        myQuizzesPage.clickOnAddQuiz();
+
+        quizFormPage.enterQuizTitle(dotenv.get("QUIZ_TITLE_2"));
+        quizFormPage.clickSaveQuizButton();
+        handleConfirmationAlert(true);
+
+        mainPage.clickMyQuizzes();
+
+        myQuizzesPage.startInvalidGame(dotenv.get("QUIZ_TITLE_2"));
+
+        mainPage.clickGames();
+
+        assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_2")));
+        deleteQuizzes();
     }
 
 
@@ -78,7 +94,6 @@ class GamesPageTest extends BaseTest {
         mainPage.clickMyQuizzes();
 
         myQuizzesPage.playQuiz(dotenv.get("QUIZ_TITLE_1"));
-
     }
 
 }
