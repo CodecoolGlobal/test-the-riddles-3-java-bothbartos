@@ -29,6 +29,8 @@ class GamesPageTest extends BaseTest {
 
         assertUrlContains("game/lobby/");
 
+        deleteQuizzes();
+
     }
 
     @Test
@@ -41,6 +43,8 @@ class GamesPageTest extends BaseTest {
         mainPage.clickGames();
         gamesPage.clickJoinGameByName(dotenv.get("QUIZ_TITLE_1"));
         assertUrlContains("game/quiz");
+
+        deleteQuizzes();
     }
 
     @Test
@@ -54,6 +58,7 @@ class GamesPageTest extends BaseTest {
         gamesPage.clickJoinGameByName(dotenv.get("QUIZ_TITLE_1"));
         gamesPage.renamePlayer("PLAYER");
         assertTrue(wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[text()='Good luck!']"))).isDisplayed());
+        deleteQuizzes();
     }
 
     @Test
@@ -63,17 +68,17 @@ class GamesPageTest extends BaseTest {
 
         myQuizzesPage.clickOnAddQuiz();
 
-        quizFormPage.enterQuizTitle(dotenv.get("QUIZ_TITLE_1"));
+        quizFormPage.enterQuizTitle(dotenv.get("QUIZ_TITLE_2"));
         quizFormPage.clickSaveQuizButton();
         handleConfirmationAlert(true);
 
         mainPage.clickMyQuizzes();
 
-        myQuizzesPage.startInvalidGame(dotenv.get("QUIZ_TITLE_1"));
+        myQuizzesPage.startInvalidGame(dotenv.get("QUIZ_TITLE_2"));
 
         mainPage.clickGames();
 
-        assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1")));
+        assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_2")));
         deleteQuizzes();
     }
 
@@ -89,7 +94,6 @@ class GamesPageTest extends BaseTest {
         mainPage.clickMyQuizzes();
 
         myQuizzesPage.playQuiz(dotenv.get("QUIZ_TITLE_1"));
-
     }
 
 }
