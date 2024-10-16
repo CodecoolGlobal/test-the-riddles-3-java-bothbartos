@@ -9,7 +9,7 @@
 
 ## About The SUT
 
-QuizBlast is a dynamic, full-stack web application designed to ignite the fun in learning through interactive quizzes. Users like you can:
+Reptile Riddles is a dynamic, full-stack web application designed to ignite the fun in learning through interactive quizzes. Users like you can:
 
 - Become a Quiz Master: Craft compelling quizzes with ease. Add questions, set difficulty levels, and choose from various question types, including multiple choice, true/false, and open-ended. Edit and refine your quizzes anytime to keep them fresh and engaging.
 - Challenge and Connect: Share your quizzes with friends, classmates, or colleagues. Invite them to test their knowledge. Witness your creativity come alive as others answer your questions and strive for the top spot.
@@ -48,8 +48,8 @@ QuizBlast is a dynamic, full-stack web application designed to ignite the fun in
 
 ![Java] <br/> ![SpringBoot]<br/> ![psql]
 
-<p align="right">(<a href="#about-the-project">back to top</a>)</p>
-
+###  Test Automation:
+![Java] <br/> ![Selenium] <br/> ![JUnit5]
 
 ## Usage
 
@@ -57,8 +57,9 @@ This application is a dockerized monolith.
 Once you have the docker CLI installed, running the project will only take one command.
 
 1. Install docker
-2. Navigate to the project root
-3. Run the project:
+2. Clone [this][reptile-riddles-url] repository.
+4. Navigate to the project root
+5. Run the project:
 ```shell
 $ docker compose up
 ```
@@ -71,66 +72,9 @@ This repository contains automated UI tests for Reptile Riddles using Selenium W
 
 Before you begin, ensure you have met the following requirements:
 
-- Java Development Kit (JDK): Version 8 or higher.
-- Maven: Version 3.6.0 or higher.
-- WebDriver Executables: ChromeDriver executables are installed.
-- Created .env file in src/test/resources package with the following fields:
-```
-ROOT_URL=http://localhost:3000/
-TEMP_FOLDER=/tmp/tarun
-
-USERNAME_1=
-PASSWORD_1=
-EMAIL_1=
-
-USERNAME_2=
-PASSWORD_2=
-EMAIL_2=
-
-USERNAME_3=
-PASSWORD_3=
-EMAIL_3=
-
-USERNAME_4=" "
-PASSWORD_4=" "
-EMAIL_4=" "
-
-QUIZ_TITLE_1=
-QUIZ_QUESTION_1=
-QUIZ_1_ANSWER_1=
-QUIZ_1_ANSWER_2=
-QUIZ_1_ANSWER_3=
-
-QUIZ_TITLE_2=
-QUIZ_QUESTION_2=
-QUIZ_2_ANSWER_1=
-QUIZ_2_ANSWER_2=
-QUIZ_2_ANSWER_3=
-QUIZ_2_ANSWER_4=
-QUIZ_2_ANSWER_5=
-QUIZ_2_ANSWER_6=
-
-QUIZ_TITLE_3 =
-QUIZ_QUESTION_3=
-QUIZ_3_ANSWER_1=
-QUIZ_3_ANSWER_2=
-
-QUIZ_TITLE_4=
-QUIZ_QUESTION_4=
-QUIZ_4_ANSWER_1=
-QUIZ_4_ANSWER_2=
-
-QUIZ_TITLE_5=
-QUIZ_QUESTION_5=
-QUIZ_5_ANSWER_1=
-QUIZ_5_ANSWER_2=
-
-QUIZ_TITLE_6=
-QUIZ_QUESTION_6=
-QUIZ_6_ANSWER_1=
-QUIZ_6_ANSWER_2=    
-```
-
+- [Java Development Kit (JDK)][oracle-url]: Version 8 or higher.
+- [Maven][Maven-url]: Version 3.6.0 or higher.
+- WebDriver Executables: [Chrome Driver][chrome-driver-url] executables are installed.
 
 ## Setup
 
@@ -138,24 +82,27 @@ QUIZ_6_ANSWER_2=
     ```bash 
     git clone git@github.com:CodecoolGlobal/test-the-riddles-3-java-bothbartos.git
     ```
-2. Install dependencies:
+2. Navigate to the project root
+3. Install dependencies:
     ```bash
     mvn clean install
     ```
 
-## Running every test
- 
-```bash
-mvn -Dtest=OrderedTestSuite test
-```
-
-## Running single test
-```bash
-mvn -Dtest=TestClassName test
-```
+4. Running tests:
+   ```bash
+   mvn test
+   ```
 
 
+### Contributors:
 
+
+<a href="https://github.com/CodecoolGlobal/test-the-riddles-3-java-bothbartos/graphs/contributors">
+</a>
+
+* https://github.com/bothbartos
+* https://github.com/Tavirutyutyu
+* https://github.com/attis82
 
 
 ## User stories
@@ -195,8 +142,15 @@ mvn -Dtest=TestClassName test
 
 [psql]: https://img.shields.io/badge/postgresql-000000?style=for-the-badge&logo=postgresql
 
-[Github Pages]: https://img.shields.io/badge/github-121013?style=for-the-badge&logo=github&logoColor=white
+[JUnit5]: https://img.shields.io/badge/JUnit5-000000?style=for-the-badge&logo=junit5
 
-[Gmail]: https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white
+[Selenium]: https://img.shields.io/badge/Selenium-000000?style=for-the-badge&logo=selenium
 
-[LinkedIn]: https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white
+[oracle-url]: https://www.oracle.com/java/technologies/downloads/?er=221886
+
+[reptile-riddles-url]: https://github.com/CodecoolGlobal/reptile-riddles-2-general-bothbartos
+
+[Maven-url]: https://maven.apache.org/
+
+[chrome-driver-url]: https://developer.chrome.com/docs/chromedriver/downloads
+
