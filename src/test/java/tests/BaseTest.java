@@ -9,6 +9,8 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.*;
 
@@ -21,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class BaseTest {
     protected static WebDriver driver;
-    protected static WebDriverWait wait;
+    protected static FluentWait<WebDriver> wait;
     protected static String baseUrl;
     protected static Dotenv dotenv;
     protected static ChromeOptions options;
@@ -45,7 +47,7 @@ public abstract class BaseTest {
     public void before() {
         options = new ChromeOptions();
         options.addArguments("--disable-search-engine-choice-screen");
-        options.setExperimentalOption("excludeSwitches", Arrays.asList("enable-automation"));
+        options.setExperimentalOption("excludeSwitches", List.of("enable-automation"));
 
         options.setExperimentalOption("prefs", Map.of(
                 "credentials_enable_service", false,
@@ -64,7 +66,10 @@ public abstract class BaseTest {
         WebDriverManager.chromedriver().setup();
 
         driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(4))
+                .pollingEvery(Duration.ofMillis(300))
+                .ignoring(NoSuchElementException.class, TimeoutException.class);
 
         mainPage = new MainPage(driver, wait);
         loginPage = new LoginPage(driver, wait);
@@ -173,10 +178,8 @@ public abstract class BaseTest {
         quizFormPage.clickOnAddQuestionButton();
         quizFormPage.enterQuestion(question);
         answerFormPage.enterAnswers(options);
-        if (options.size() > 2) {
-            answerFormPage.clickSaveQuestionButton();
-            handleConfirmationAlert(true);
-        }
+        answerFormPage.clickSaveQuestionButton();
+        handleConfirmationAlert(true);
         quizFormPage.clickSaveQuizButton();
         handleConfirmationAlert(true);
     }

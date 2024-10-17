@@ -5,15 +5,17 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.*;
 
 public class AnswerForm {
-    private WebDriverWait wait;
+    private FluentWait<WebDriver> wait;
     private WebDriver driver;
 
-    public AnswerForm(WebDriver driver, WebDriverWait wait) {
+    public AnswerForm(WebDriver driver, FluentWait<WebDriver> wait) {
         PageFactory.initElements(driver, this);
         this.driver = driver;
         this.wait = wait;

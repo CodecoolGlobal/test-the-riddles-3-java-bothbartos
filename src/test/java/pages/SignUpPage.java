@@ -5,12 +5,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-
 public class SignUpPage {
-    private final WebDriverWait wait;
+    private final FluentWait<WebDriver> wait;
     @FindBy(id = "user-name")
     private WebElement usernameField;
     @FindBy(id = "password")
@@ -20,7 +20,7 @@ public class SignUpPage {
     @FindBy(xpath = "//*[text()='SIGN UP']")
     private WebElement signUpButton;
 
-    public SignUpPage(WebDriver driver, WebDriverWait wait) {
+    public SignUpPage(WebDriver driver, FluentWait<WebDriver> wait) {
         PageFactory.initElements(driver, this);
         this.wait = wait;
     }

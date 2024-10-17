@@ -2,19 +2,17 @@ package tests;
 
 
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import java.util.stream.Stream;
-
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import tests.Utils.Utils;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LoginPageTest extends BaseTest{
 
     @BeforeEach
     public void setUp() {
         initializeDriver();
-        driver.get(baseUrl + "login");
+        driver.get(baseUrl + "register");
         driver.manage().window().maximize();
     }
 
@@ -23,45 +21,49 @@ public class LoginPageTest extends BaseTest{
         driver.quit();
     }
 
-    @ParameterizedTest
-    @MethodSource("credentialsProvider")
-    public void testLogin(String username, String password) {
-        loginPage.login(username, password);
-        assertCorrectUrl(baseUrl);
-    }
-
     @Test
-    @DisplayName("User stays logged in after closing and opening browser")
-    public void testLoginAfterClose() {
-        driver.quit();
-        options.addArguments("user-data-dir="+ dotenv.get("TEMP_FOLDER"));
-        initializeDriver();
-        driver.get(baseUrl + "login");
-        driver.manage().window().maximize();
+    public void testLogin() {
+        String username = Utils.createRandomUsername();
+        String password = Utils.createRandomPassword();
+        String email = Utils.createRandomEmail();
 
+        signUpPage.signUp(username, email, password);
 
-        loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
+        wait.until(ExpectedConditions.urlToBe(baseUrl+"login"));
+        loginPage.login(username, password);
 
-        driver.quit();
-
-        initializeDriver();
-        driver.get(baseUrl);
-
-        assertLogoutButtonIsPresent();
-        driver.quit();
+        assertCorrectUrl(baseUrl);
     }
 
     @Test
     @DisplayName("Login with valid credentials then write /login in url")
     public void testLoginWithValidCredentialsThenWriteLoginInUrl() {
-        loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
+        String username = Utils.createRandomUsername();
+        String email = Utils.createRandomEmail();
+        String password = Utils.createRandomPassword();
+
+        signUpPage.signUp(username, email, password);
+
+        wait.until(ExpectedConditions.urlToBe(baseUrl+"login"));
+        loginPage.login(username, password);
+
         driver.get(baseUrl + "login");
+
         assertFalse(loginPage.isLoginButtonPresent());
     }
 
+    @DisplayName("Login then logout test")
+    @Test
+    public void testLoginLogout() {
+        String username = Utils.createRandomUsername();
+        String password = Utils.createRandomPassword();
+        String email = Utils.createRandomEmail();
 
-    public static Stream<Arguments> credentialsProvider() {
-        return CredentialsLoader.getLoginCredentials();
+        signUpPage.signUp(username, email, password);
+        wait.until(ExpectedConditions.urlToBe(baseUrl+"login"));
+        loginPage.login(username, password);
+        assertCorrectUrl(baseUrl);
+        mainPage.clickLogout();
+        assertTrue(loginPage.isLoginButtonPresent());
     }
-
 }

@@ -7,14 +7,15 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
-import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MyQuizzesPage {
-    private final WebDriverWait wait;
+    private final FluentWait<WebDriver> wait;
     private final WebDriver driver;
     @FindBy(xpath = "//button[text()='Add Quiz']")
     private WebElement addQuizButton;
@@ -25,7 +26,7 @@ public class MyQuizzesPage {
     @FindBy(xpath = "//button[text()=':(']")
     private WebElement notValidGameButton;
 
-    public MyQuizzesPage(WebDriver driver, WebDriverWait wait) {
+    public MyQuizzesPage(WebDriver driver, FluentWait<WebDriver> wait) {
         PageFactory.initElements(driver, this);
         this.wait = wait;
         this.driver = driver;
@@ -102,9 +103,12 @@ public class MyQuizzesPage {
             WebElement playButton = quiz.findElement(By.xpath("//button[text()='Play']"));
             playButton.click();
             wait.until(ExpectedConditions.elementToBeClickable(createGameLobbyButton)).click();
-            wait.until(ExpectedConditions.elementToBeClickable(notValidGameButton)).click();
 
         }
+    }
+
+    public boolean isSadEmojiButtonPresent() {
+        return notValidGameButton.isDisplayed();
     }
 
 }

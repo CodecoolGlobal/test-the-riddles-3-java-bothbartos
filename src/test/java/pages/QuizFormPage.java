@@ -5,12 +5,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-
 public class QuizFormPage {
-    private WebDriverWait wait;
+    private FluentWait<WebDriver> wait;
     private AnswerForm answerForm;
 
     @FindBy(xpath = "//button[text()='Add Quiz']")
@@ -43,7 +43,7 @@ public class QuizFormPage {
     private WebElement questionField;
 
 
-    public QuizFormPage(WebDriver driver, WebDriverWait wait, AnswerForm answerForm) {
+    public QuizFormPage(WebDriver driver, FluentWait<WebDriver> wait, AnswerForm answerForm) {
         PageFactory.initElements(driver, this);
         this.wait = wait;
         this.answerForm = answerForm;

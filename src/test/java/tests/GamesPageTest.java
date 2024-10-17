@@ -3,6 +3,7 @@ package tests;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import pages.LoginPage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,8 +17,9 @@ class GamesPageTest extends BaseTest {
     @BeforeEach
     void setUp() {
         initializeDriver();
-        driver.get(baseUrl + "login");
         driver.manage().window().maximize();
+
+        driver.get(baseUrl + "login");
         loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
     }
 
@@ -76,22 +78,21 @@ class GamesPageTest extends BaseTest {
 
         myQuizzesPage.startInvalidGame(dotenv.get("QUIZ_TITLE_2"));
 
-        mainPage.clickGames();
 
-        assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_2")));
+        assertTrue(myQuizzesPage.isSadEmojiButtonPresent());
         deleteQuizzes();
     }
 
 
     private void startNewGame() {
 
-        mainPage.clickMyQuizzes();
+        driver.get(baseUrl + "quiz/my");
         Map<String, Boolean> answers = new HashMap<>();
         answers.put(dotenv.get("QUIZ_1_ANSWER_1"), true);
         answers.put(dotenv.get("QUIZ_1_ANSWER_2"), false);
         createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_1"), answers);
 
-        mainPage.clickMyQuizzes();
+        driver.get(baseUrl + "quiz/my");
 
         myQuizzesPage.playQuiz(dotenv.get("QUIZ_TITLE_1"));
     }
