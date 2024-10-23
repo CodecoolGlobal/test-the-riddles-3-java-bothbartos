@@ -1,9 +1,8 @@
 package tests;
 
-
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import tests.Utils.Utils;
+import tests.utils.Utils;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -22,7 +21,7 @@ public class LoginPageTest extends BaseTest{
     }
 
     @Test
-    public void testLogin() {
+    public void loginTest() {
         String username = Utils.createRandomUsername();
         String password = Utils.createRandomPassword();
         String email = Utils.createRandomEmail();
@@ -37,7 +36,7 @@ public class LoginPageTest extends BaseTest{
 
     @Test
     @DisplayName("Login with valid credentials then write /login in url")
-    public void testLoginWithValidCredentialsThenWriteLoginInUrl() {
+    public void loginWithValidCredentialsThenWriteLoginInUrlTest() {
         String username = Utils.createRandomUsername();
         String email = Utils.createRandomEmail();
         String password = Utils.createRandomPassword();
@@ -54,7 +53,7 @@ public class LoginPageTest extends BaseTest{
 
     @DisplayName("Login then logout test")
     @Test
-    public void testLoginLogout() {
+    public void loginLogoutTest() {
         String username = Utils.createRandomUsername();
         String password = Utils.createRandomPassword();
         String email = Utils.createRandomEmail();

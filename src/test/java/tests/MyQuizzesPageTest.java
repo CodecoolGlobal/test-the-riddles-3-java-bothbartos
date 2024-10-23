@@ -2,12 +2,9 @@ package tests;
 
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import tests.Utils.CredentialsLoader;
-import tests.Utils.Utils;
-
+import tests.utils.Utils;
 import java.util.HashMap;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,20 +28,20 @@ public class MyQuizzesPageTest extends BaseTest {
 
     @DisplayName("When the user logs in and clicks on My Quizzes on main page, My Quizzes page loads.")
     @Test
-    public void testMyQuizzesPageLoads() {
+    public void myQuizzesPageLoadsTest() {
         assertCorrectUrl(baseUrl + "quiz/my");
     }
 
     @Test
     @DisplayName("Delete quiz after logging in")
-    public void testDeleteQuizAfterLogin() {
+    public void deleteQuizAfterLoginTest() {
         Map<String, Boolean> answers = new HashMap<>();
         answers.put("42", true);
         answers.put("33", false);
 
         String randomNum = Utils.getRandomNum();
         createNewQuiz("test quiz" + randomNum, "The Question", answers);
-        assertTrue(assertQuizDivContainsText("Quiz to delete"));
+        assertTrue(assertQuizDivContainsText("test quiz" + randomNum));
         mainPage.clickMyQuizzes();
 
         myQuizzesPage.deleteQuiz("test quiz" + randomNum);

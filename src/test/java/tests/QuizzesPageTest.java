@@ -2,11 +2,9 @@ package tests;
 
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import tests.Utils.Utils;
-
+import tests.utils.Utils;
 import java.util.HashMap;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuizzesPageTest extends BaseTest {

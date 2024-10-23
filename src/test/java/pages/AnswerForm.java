@@ -6,30 +6,20 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.util.*;
 
 public class AnswerForm {
-    private FluentWait<WebDriver> wait;
-    private WebDriver driver;
+    private final FluentWait<WebDriver> wait;
 
     public AnswerForm(WebDriver driver, FluentWait<WebDriver> wait) {
         PageFactory.initElements(driver, this);
-        this.driver = driver;
         this.wait = wait;
     }
 
     @FindBy(xpath = "//button[text()='+ Add option']")
     private WebElement addOptionButton;
-
-    @FindBy(xpath = "//input[contains(text(), 'time')]")
-    private WebElement timeLimitField;
     @FindBy(xpath = "//button[text()='Save']")
     private WebElement saveQuestionButton;
-    @FindBy(xpath = "//button[text()='Delete']")
-    private WebElement deleteQuestionButton;
     @FindBy(xpath = "//button[contains(text(), '1')]")
     private WebElement questionButton;
 
@@ -71,62 +61,8 @@ public class AnswerForm {
         wait.until(ExpectedConditions.visibilityOf(answerField));
         answerField.sendKeys(answer);
         if (isRight) {
-            wait.until(ExpectedConditions.visibilityOf(checkbox));
+            wait.until(ExpectedConditions.elementToBeClickable(checkbox));
             checkbox.click();
-        }
-    }
-
-    public void enterFirstAnswer(String answer, boolean isRight) {
-        wait.until(ExpectedConditions.visibilityOf(firstAnswerField));
-        firstAnswerField.sendKeys(answer);
-        if (isRight) {
-            wait.until(ExpectedConditions.visibilityOf(firstCheckBox));
-            firstCheckBox.click();
-        }
-    }
-
-    public void enterSecondAnswer(String answer, boolean isRight) {
-        wait.until(ExpectedConditions.visibilityOf(secondAnswerField));
-        secondAnswerField.sendKeys(answer);
-        if (isRight) {
-            wait.until(ExpectedConditions.visibilityOf(secondCheckBox));
-            secondCheckBox.click();
-        }
-    }
-
-    public void enterThirdAnswer(String answer, boolean isRight) {
-        wait.until(ExpectedConditions.visibilityOf(thirdAnswerField));
-        thirdAnswerField.sendKeys(answer);
-        if (isRight) {
-            wait.until(ExpectedConditions.visibilityOf(thirdCheckBox));
-            thirdCheckBox.click();
-        }
-    }
-
-    public void enterFourthAnswer(String answer, boolean isRight) {
-        wait.until(ExpectedConditions.visibilityOf(fourthAnswerField));
-        fourthAnswerField.sendKeys(answer);
-        if (isRight) {
-            wait.until(ExpectedConditions.visibilityOf(fourthCheckBox));
-            fourthCheckBox.click();
-        }
-    }
-
-    public void enterFifthAnswer(String answer, boolean isRight) {
-        wait.until(ExpectedConditions.visibilityOf(fifthAnswerField));
-        fifthAnswerField.sendKeys(answer);
-        if (isRight) {
-            wait.until(ExpectedConditions.visibilityOf(fifthCheckBox));
-            fifthCheckBox.click();
-        }
-    }
-
-    public void enterSixthAnswer(String answer, boolean isRight) {
-        wait.until(ExpectedConditions.visibilityOf(sixthAnswerField));
-        sixthAnswerField.sendKeys(answer);
-        if (isRight) {
-            wait.until(ExpectedConditions.visibilityOf(sixthCheckBox));
-            sixthCheckBox.click();
         }
     }
 

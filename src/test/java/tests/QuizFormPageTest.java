@@ -2,17 +2,11 @@ package tests;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvFileSource;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import tests.Utils.CredentialsLoader;
-import tests.Utils.Utils;
-
+import tests.utils.Utils;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class QuizFormPageTest extends BaseTest {

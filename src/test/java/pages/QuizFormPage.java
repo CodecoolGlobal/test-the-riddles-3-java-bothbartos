@@ -6,15 +6,10 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class QuizFormPage {
-    private FluentWait<WebDriver> wait;
-    private AnswerForm answerForm;
-
-    @FindBy(xpath = "//button[text()='Add Quiz']")
-    private WebElement addQuizButton;
+    private final FluentWait<WebDriver> wait;
+    private final AnswerForm answerForm;
 
     @FindBy(xpath = "//button[text()='Add Question']")
     private WebElement addQuestionButton;
@@ -26,16 +21,6 @@ public class QuizFormPage {
 
     @FindBy(xpath = "//button[contains(text(),'1')]")
     private WebElement firstQuestionButton;
-    @FindBy(xpath = "//button[contains(text(),'2')]")
-    private WebElement secondQuestionButton;
-    @FindBy(xpath = "//button[contains(text(),'3')]")
-    private WebElement thirdQuestionButton;
-    @FindBy(xpath = "//button[contains(text(),'4')]")
-    private WebElement fourthQuestionButton;
-    @FindBy(xpath = "//button[contains(text(),'5')]")
-    private WebElement fifthQuestionButton;
-    @FindBy(xpath = "//button[contains(text(),'6')]")
-    private WebElement sixthQuestionButton;
 
     @FindBy(id = "name")
     private WebElement quizName;
@@ -62,21 +47,9 @@ public class QuizFormPage {
         questionField.sendKeys(question);
     }
 
-    public void clickOnAddQuizButton(){
-        wait.until(ExpectedConditions.visibilityOf(addQuizButton));
-        addQuizButton.click();
-    }
-
     public void clickSaveQuizButton() {
-        wait.until(ExpectedConditions.visibilityOf(saveQuizButton));
+        wait.until(ExpectedConditions.elementToBeClickable(saveQuizButton));
         saveQuizButton.click();
-    }
-
-    public void createNewQuiz(String title, String question){
-        clickOnAddQuizButton();
-        enterQuizTitle(title);
-        clickOnAddQuestionButton();
-        enterQuestion(question);
     }
 
     public void clickOnDeleteButton() {
@@ -85,7 +58,7 @@ public class QuizFormPage {
     }
 
     private void clickOnFirstQuestionButton() {
-        wait.until(ExpectedConditions.visibilityOf(firstQuestionButton));
+        wait.until(ExpectedConditions.elementToBeClickable(firstQuestionButton));
         firstQuestionButton.click();
     }
 

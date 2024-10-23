@@ -7,8 +7,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
+
 
 public class LoginPage {
     private final FluentWait<WebDriver> wait;
@@ -32,8 +31,8 @@ public class LoginPage {
         this.password.sendKeys(password);
     }
     public void clickLoginButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(this.loginButton));
-        this.loginButton.click();
+        wait.until(ExpectedConditions.elementToBeClickable(loginButton));
+        loginButton.click();
     }
 
     public void login(String username, String password) {
@@ -49,13 +48,5 @@ public class LoginPage {
         }catch (NoSuchElementException e){
             return false;
         }
-    }
-
-    public String getUsername() {
-        return username.getText();
-    }
-
-    public String getPassword() {
-        return password.getText();
     }
 }
