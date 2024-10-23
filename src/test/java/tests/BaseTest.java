@@ -1,29 +1,24 @@
 package tests;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import io.github.cdimascio.dotenv.Dotenv;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.FluentWait;
 import pages.*;
-
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class BaseTest {
+    protected static final String baseUrl = "http://localhost:3000/";
+
     protected static WebDriver driver;
-    protected static WebDriverWait wait;
-    protected static String baseUrl;
-    protected static Dotenv dotenv;
+    protected static FluentWait<WebDriver> wait;
     protected static ChromeOptions options;
 
     protected static MainPage mainPage;
@@ -34,18 +29,14 @@ public abstract class BaseTest {
     protected static AnswerForm answerFormPage;
     protected static GamesPage gamesPage;
     protected static QuizzesPage quizzesPage;
+    protected static QuizGamePage quizGamePage;
 
-    @BeforeAll
-    public static void setup() {
-        dotenv = Dotenv.load();
-        baseUrl = dotenv.get("ROOT_URL");
-    }
 
     @BeforeEach
     public void before() {
         options = new ChromeOptions();
         options.addArguments("--disable-search-engine-choice-screen");
-        options.setExperimentalOption("excludeSwitches", Arrays.asList("enable-automation"));
+        options.setExperimentalOption("excludeSwitches", List.of("enable-automation"));
 
         options.setExperimentalOption("prefs", Map.of(
                 "credentials_enable_service", false,
@@ -64,7 +55,10 @@ public abstract class BaseTest {
         WebDriverManager.chromedriver().setup();
 
         driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(4))
+                .pollingEvery(Duration.ofMillis(300))
+                .ignoring(NoSuchElementException.class);
 
         mainPage = new MainPage(driver, wait);
         loginPage = new LoginPage(driver, wait);
@@ -74,6 +68,7 @@ public abstract class BaseTest {
         quizFormPage = new QuizFormPage(driver, wait, answerFormPage);
         gamesPage = new GamesPage(driver, wait);
         quizzesPage = new QuizzesPage(driver, wait);
+        quizGamePage = new QuizGamePage(driver, wait);
     }
 
     protected void logoutIfLoggedIn() {
@@ -97,23 +92,11 @@ public abstract class BaseTest {
         assertTrue(waitForUrlToBe(url), "Expected URL: " + url + ", but was: " + driver.getCurrentUrl());
     }
 
-    private boolean waitForUrlToContain(String url) {
-        try {
-            return wait.until(ExpectedConditions.urlContains(url));
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    protected void assertUrlContains(String url) {
-        assertTrue(waitForUrlToContain(url), "Expected URL: " + url + ", but was: " + driver.getCurrentUrl());
-    }
-
     protected void handleConfirmationAlert(boolean ok) {
         wait.until(ExpectedConditions.alertIsPresent());
         Alert alert = driver.switchTo().alert();
         assertNotNull(alert);
-        if (ok) {
+        if (ok && (alert.getText().contains("Save changes?") || alert.getText().contains("new task"))) {
             alert.accept();
         } else {
             alert.dismiss();
@@ -139,11 +122,6 @@ public abstract class BaseTest {
         return false;
     }
 
-    protected void assertLogoutButtonIsPresent() {
-        WebElement logoutButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[normalize-space()='Logout']")));
-        assertTrue(logoutButton.isDisplayed());
-    }
-
     protected boolean isAlertPresent() {
         try {
             driver.switchTo().alert();
@@ -153,30 +131,14 @@ public abstract class BaseTest {
         }
     }
 
-    public void deleteAllQuizzes() {
-        driver.get(baseUrl);
-        logoutIfLoggedIn();
-        mainPage.clickLogin();
-        loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
-        mainPage.clickMyQuizzes();
-        myQuizzesPage.deleteAllQuizzes();
-        mainPage.clickLogout();
-        loginPage.login(dotenv.get("USERNAME_2"), dotenv.get("PASSWORD_2"));
-        mainPage.clickMyQuizzes();
-        myQuizzesPage.deleteAllQuizzes();
-        mainPage.clickLogout();
-    }
-
     protected void createNewQuiz(String title, String question, Map<String, Boolean> options) {
         myQuizzesPage.clickOnAddQuiz();
         quizFormPage.enterQuizTitle(title);
         quizFormPage.clickOnAddQuestionButton();
         quizFormPage.enterQuestion(question);
         answerFormPage.enterAnswers(options);
-        if (options.size() > 2) {
-            answerFormPage.clickSaveQuestionButton();
-            handleConfirmationAlert(true);
-        }
+        answerFormPage.clickSaveQuestionButton();
+        handleConfirmationAlert(true);
         quizFormPage.clickSaveQuizButton();
         handleConfirmationAlert(true);
     }

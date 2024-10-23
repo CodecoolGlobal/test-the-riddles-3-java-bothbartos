@@ -1,17 +1,12 @@
 package tests;
 
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import tests.utils.Utils;
 
-
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SignUpPageTest extends BaseTest {
 
     @BeforeEach
@@ -23,7 +18,7 @@ public class SignUpPageTest extends BaseTest {
 
     @Test
     @DisplayName("Register with empty credentials")
-    public void testSignUpPageWithEmptyCredentials() {
+    public void signUpPageWithEmptyCredentialsTest() {
         signUpPage.enterUsername("");
         signUpPage.enterEmail("");
         signUpPage.enterPassword("");
@@ -31,29 +26,28 @@ public class SignUpPageTest extends BaseTest {
         assertTrue(isAlertPresent());
     }
 
-    @ParameterizedTest
-    @MethodSource("credentialsProvider")
-    public void testSignUpPage(String username, String email, String password) {
+    @Test
+    public void signUpPageTest() {
+        String username = Utils.createRandomUsername();
+        String email = Utils.createRandomEmail();
+        String password = Utils.createRandomPassword();
 
-        signUpPage.enterUsername(username);
-        signUpPage.enterEmail(email);
-        signUpPage.enterPassword(password);
-        signUpPage.clickSignUpButton();
+        signUpPage.signUp(username, email, password);
 
         assertCorrectUrl(baseUrl + "login");
     }
 
     @Test
     @DisplayName("Register with in-use username, email, password")
-    public void testSignUpPageWithInUseUsername() {
-        signUpPage.enterUsername(dotenv.get("USERNAME_1"));
-        signUpPage.enterEmail(dotenv.get("EMAIL_1"));
-        signUpPage.enterPassword(dotenv.get("PASSWORD_1"));
-        signUpPage.clickSignUpButton();
-        assertTrue(isAlertPresent());
-    }
+    public void signUpPageWithInUseUsernameTest() {
+        String username = Utils.createRandomUsername();
+        String email = Utils.createRandomEmail();
+        String password = Utils.createRandomPassword();
 
-    public static Stream<Arguments> credentialsProvider() {
-        return CredentialsLoader.getSignUpCredentials();
+        signUpPage.signUp(username, email, password);
+        driver.get(baseUrl + "register");
+        signUpPage.signUp(username, email, password);
+
+        assertTrue(isAlertPresent());
     }
 }

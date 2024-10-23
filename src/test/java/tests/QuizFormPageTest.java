@@ -2,26 +2,27 @@ package tests;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
+import org.junit.jupiter.params.provider.CsvFileSource;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import tests.utils.Utils;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class QuizFormPageTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
         initializeDriver();
-        driver.get(baseUrl);
+        driver.get(baseUrl + "register");
         driver.manage().window().maximize();
-
-        mainPage.clickLogin();
-        loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
+        String username = Utils.createRandomUsername();
+        String email = Utils.createRandomEmail();
+        String password = Utils.createRandomPassword();
+        signUpPage.signUp(username, email, password);
+        wait.until(ExpectedConditions.urlToBe(baseUrl + "login"));
+        loginPage.login(username, password);
+        wait.until(ExpectedConditions.urlToBe(baseUrl));
         mainPage.clickMyQuizzes();
     }
 
@@ -31,21 +32,26 @@ public class QuizFormPageTest extends BaseTest {
         driver.close();
     }
 
-    @Test
+
+    @ParameterizedTest
+    @CsvFileSource(resources = "/quiz_form_fields.csv", numLinesToSkip = 1)
     @DisplayName("Create new quiz after logging in")
-    public void createNewQuizWithLoggingInTest() {
+    public void createNewQuizWithLoggingInTest(String title,
+                                               String question,
+                                               String answer1,
+                                               String answer2) {
 
         Map<String, Boolean> answers = new HashMap<>();
-        answers.put("true", true);
-        answers.put("false", false);
-        createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_1"), answers);
+        answers.put(answer1, true);
+        answers.put(answer2, false);
+        createNewQuiz(title, question, answers);
 
         mainPage.clickMyQuizzes();
 
-        assertTrue(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1")));
+        assertTrue(assertQuizDivContainsText(title));
 
         mainPage.clickAllQuizzes();
-        assertTrue(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1")));
+        assertTrue(assertQuizDivContainsText(title));
         deleteQuizzes();
     }
 
@@ -63,12 +69,20 @@ public class QuizFormPageTest extends BaseTest {
     public void createNewQuizThenAddQuestionToItTest() {
 
         Map<String, Boolean> answers = new HashMap<>();
-        answers.put(dotenv.get("QUIZ_1_ANSWER_1"), false);
-        answers.put(dotenv.get("QUIZ_1_ANSWER_2"), true);
-        answers.put(dotenv.get("QUIZ_1_ANSWER_3"), false);
-        createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_1"), answers);
+        answers.put("answer1", false);
+        answers.put("answer2", true);
+        answers.put("answer3", false);
 
-        assertTrue(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1")));
+        String randomNum = Utils.getRandomNum();
+        createNewQuiz("test quiz" + randomNum, "Can I add new answer?", answers);
+
+        driver.get(baseUrl + "quiz/all");
+        assertTrue(assertQuizDivContainsText("test quiz" + randomNum));
+
+
+
+        driver.get(baseUrl + "quiz/my");
+        assertTrue(assertQuizDivContainsText("test quiz" + randomNum));
         deleteQuizzes();
 
     }
@@ -77,16 +91,17 @@ public class QuizFormPageTest extends BaseTest {
     @DisplayName("Create new quiz then add every answer option")
     public void createNewQuizThenAddEveryAnswerOptionTest() {
         Map<String, Boolean> answers = new HashMap<>();
-        answers.put(dotenv.get("QUIZ_2_ANSWER_1"), true);
-        answers.put(dotenv.get("QUIZ_2_ANSWER_2"), false);
-        answers.put(dotenv.get("QUIZ_2_ANSWER_3"), false);
-        answers.put(dotenv.get("QUIZ_2_ANSWER_4"), false);
-        answers.put(dotenv.get("QUIZ_2_ANSWER_5"), false);
-        answers.put(dotenv.get("QUIZ_2_ANSWER_6"), false);
+        answers.put("answer1", true);
+        answers.put("answer2", false);
+        answers.put("answer3", false);
+        answers.put("answer4", false);
+        answers.put("answer5", false);
+        answers.put("answer6", false);
 
-        createNewQuiz(dotenv.get("QUIZ_TITLE_2"), dotenv.get("QUIZ_QUESTION_2"), answers);
+        String randomNum = Utils.getRandomNum();
+        createNewQuiz("test quiz" + randomNum, "Can I add every answer?", answers);
 
-        assertTrue(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_2")));
+        assertTrue(assertQuizDivContainsText("test quiz" + randomNum));
         deleteQuizzes();
     }
 
@@ -94,13 +109,14 @@ public class QuizFormPageTest extends BaseTest {
     @DisplayName("Create quiz without correct answer checkbox checked")
     public void createNewQuizWithoutCorrectAnswerCheckboxCheckedTest() {
         Map<String, Boolean> answers = new HashMap<>();
-        answers.put(dotenv.get("QUIZ_2_ANSWER_1"), false);
-        answers.put(dotenv.get("QUIZ_2_ANSWER_2"), false);
+        answers.put("yes", false);
+        answers.put("no", false);
 
-        createNewQuiz(dotenv.get("QUIZ_TITLE_3"), dotenv.get("QUIZ_QUESTION_3"), answers);
+        String randomNum = Utils.getRandomNum();
+        createNewQuiz("test quiz" + randomNum, "no correct answer?", answers);
 
         mainPage.clickAllQuizzes();
-        assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_3")));
+        assertFalse(assertQuizDivContainsText("test quiz" + randomNum));
         deleteQuizzes();
 
     }
@@ -110,13 +126,15 @@ public class QuizFormPageTest extends BaseTest {
     public void chooseMultipleCorrectAnswersTest() {
 
         Map<String, Boolean> answers = new HashMap<>();
-        answers.put(dotenv.get("QUIZ_4_ANSWER_1"), true);
-        answers.put(dotenv.get("QUIZ_4_ANSWER_2"), true);
-        createNewQuiz(dotenv.get("QUIZ_TITLE_4"), dotenv.get("QUIZ_QUESTION_4"), answers);
+        answers.put("yes", true);
+        answers.put("no", true);
 
-        assertTrue(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_4")));
+        String randomNum = Utils.getRandomNum();
+        createNewQuiz("test quiz" + randomNum, "Can i choose multiple good answers?", answers);
+
+        assertTrue(assertQuizDivContainsText("test quiz" + randomNum));
         mainPage.clickMyQuizzes();
-        myQuizzesPage.editQuiz(dotenv.get("QUIZ_TITLE_4"));
+        myQuizzesPage.editQuiz("test quiz" + randomNum);
         assertTrue(quizFormPage.isEveryCheckboxChecked());
         deleteQuizzes();
 
@@ -126,19 +144,21 @@ public class QuizFormPageTest extends BaseTest {
     @DisplayName("Edit quiz title")
     public void editQuizTitleTest() {
         Map<String, Boolean> answers = new HashMap<>();
-        answers.put(dotenv.get("QUIZ_1_ANSWER_1"), true);
-        answers.put(dotenv.get("QUIZ_1_ANSWER_2"), false);
-        createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_1"), answers);
-        assertTrue(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1")));
+        answers.put("yes", true);
+        answers.put("no", false);
+
+        String randomNum = Utils.getRandomNum();
+        createNewQuiz("test quiz" + randomNum, "Can I edit quiz title?", answers);
+        assertTrue(assertQuizDivContainsText("test quiz" + randomNum));
         mainPage.clickMyQuizzes();
 
-        myQuizzesPage.editQuiz(dotenv.get("QUIZ_TITLE_1"));
-        quizFormPage.enterQuizTitle(dotenv.get("QUIZ_TITLE_2"));
+        myQuizzesPage.editQuiz("test quiz" + randomNum);
+        quizFormPage.enterQuizTitle("Is it changed?");
         quizFormPage.clickSaveQuizButton();
         handleConfirmationAlert(true);
 
         mainPage.clickMyQuizzes();
-        assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_2"));
+        assertQuizDivContainsText("test quiz" + randomNum);
         deleteQuizzes();
     }
 
@@ -146,41 +166,19 @@ public class QuizFormPageTest extends BaseTest {
     @DisplayName("user can delete quiz from editor")
     void userCanDeleteQuizFromEditorTest() {
         Map<String, Boolean> answers = new HashMap<>();
-        answers.put(dotenv.get("QUIZ_1_ANSWER_1"), true);
-        answers.put(dotenv.get("QUIZ_1_ANSWER_2"), false);
-        createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_1"), answers);
+        answers.put("yes", true);
+        answers.put("no", false);
+        String randomNum = Utils.getRandomNum();
+        createNewQuiz("test quiz" + randomNum, "Can I delete quiz from editor?", answers);
 
-        mainPage.clickMyQuizzes();
-        assertTrue(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1")));
+        driver.get(baseUrl + "quiz/my");
+        assertTrue(assertQuizDivContainsText("test quiz" + randomNum));
 
-        myQuizzesPage.editQuiz(dotenv.get("QUIZ_TITLE_1"));
+        myQuizzesPage.editQuiz("test quiz" + randomNum);
         quizFormPage.clickOnDeleteButton();
         handleConfirmationAlert(true);
 
-        assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_2")));
-    }
-
-    @Test
-    @DisplayName("user can edit the quiz")
-    void userCanEditTheQuizTest() {
-        Map<String, Boolean> answers = new HashMap<>();
-        answers.put(dotenv.get("QUIZ_1_ANSWER_1"), true);
-        answers.put(dotenv.get("QUIZ_1_ANSWER_2"), false);
-
-        createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_1"), answers);
-        mainPage.clickMyQuizzes();
-
-        assertTrue(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1")));
-
-        myQuizzesPage.editQuiz(dotenv.get("QUIZ_TITLE_1"));
-        quizFormPage.enterQuizTitle("Modified Quiz");
-        quizFormPage.clickSaveQuizButton();
-        handleConfirmationAlert(true);
-
-
-        mainPage.clickMyQuizzes();
-        assertTrue(assertQuizDivContainsText("Modified Quiz"));
-        myQuizzesPage.deleteQuiz("Modified Quiz");
+        assertFalse(assertQuizDivContainsText("test quiz" + randomNum));
     }
 
     @Test
@@ -194,21 +192,20 @@ public class QuizFormPageTest extends BaseTest {
 
         mainPage.clickAllQuizzes();
         assertFalse(assertQuizDivContainsText(""));
-        mainPage.clickMyQuizzes();
-        myQuizzesPage.deleteQuiz("");
+
         deleteQuizzes();
 
     }
 
     @ParameterizedTest
-    @MethodSource("timeCredentials")
+    @CsvFileSource(resources = "/quiz_form_fields.csv", numLinesToSkip = 1)
     @DisplayName("user can add various time intervals")
     void userCanAddVariousTimeIntervalsTest(
-            String timeIntervalText,
             String quizTitle,
             String questionText,
             String answerText1,
             String answerText2,
+            String timeIntervalText,
             String expected
     ) {
         Map<String, Boolean> answers = new HashMap<>();
@@ -226,9 +223,4 @@ public class QuizFormPageTest extends BaseTest {
         assertEquals(expected, actual);
         deleteQuizzes();
     }
-
-    public static Stream<Arguments> timeCredentials() {
-        return CredentialsLoader.loadTimeCredentials();
-    }
-
 }

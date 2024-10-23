@@ -1,20 +1,29 @@
 package tests;
 
 import org.junit.jupiter.api.*;
-
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import tests.utils.Utils;
+import java.util.HashMap;
+import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class QuizzesPageTest extends BaseTest {
 
     @BeforeEach
     public void setupTest(){
         initializeDriver();
-        driver.get(baseUrl);
         driver.manage().window().maximize();
+        driver.get(baseUrl + "register");
 
-        mainPage.clickLogin();
-        loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
+        String username = Utils.createRandomUsername();
+        String password = Utils.createRandomPassword();
+        String email = Utils.createRandomEmail();
+
+        signUpPage.signUp(username, email, password);
+
+        wait.until(ExpectedConditions.urlToBe(baseUrl + "login"));
+        loginPage.login(username, password);
+
         mainPage.clickAllQuizzes();
     }
 
@@ -30,31 +39,43 @@ class QuizzesPageTest extends BaseTest {
     @Test
     @DisplayName("Create quiz with one profile then switch to an other and copy created quiz")
     public void createQuizWithOneProfileThenCopyQuizWithOtherProfileTest() {
-        quizzesPage.clickAddQuizButton();
-        quizFormPage.enterQuizTitle(dotenv.get("QUIZ_TITLE_3"));
-        quizFormPage.clickOnAddQuestionButton();
-        quizFormPage.enterQuestion(dotenv.get("QUIZ_QUESTION_3"));
-        answerFormPage.enterFirstAnswer(dotenv.get("QUIZ_3_ANSWER_1"), true);
-        answerFormPage.enterSecondAnswer(dotenv.get("QUIZ_3_ANSWER_2"), false);
-        answerFormPage.clickSaveQuestionButton();
-        handleConfirmationAlert(true);
+        Map<String, Boolean> answers = new HashMap<>();
+        answers.put("Yes", true);
+        answers.put("No", false);
 
-        quizFormPage.clickSaveQuizButton();
-        handleConfirmationAlert(true);
+        String newUsername = Utils.createRandomUsername();
+        String newPassword = Utils.createRandomPassword();
+        String newEmail = Utils.createRandomEmail();
+        String randomNum = Utils.getRandomNum();
+        createNewQuiz("test quiz" + randomNum, "Will it fail?", answers);
+
         mainPage.clickLogout();
-        loginPage.login(dotenv.get("USERNAME_2"), dotenv.get("PASSWORD_2"));
+        mainPage.clickSignUp();
+
+        signUpPage.signUp(newUsername, newEmail, newPassword);
+
+        wait.until(ExpectedConditions.urlToBe(baseUrl + "login"));
+        loginPage.login(newUsername, newPassword);
+
         mainPage.clickAllQuizzes();
-        quizzesPage.copyQuizByTitle(dotenv.get("QUIZ_TITLE_3"));
-        quizFormPage.enterQuizTitle(dotenv.get("QUIZ_TITLE_1"));
+        quizzesPage.copyQuizByTitle("test quiz" + randomNum);
+        quizFormPage.enterQuizTitle("Will it change?");
         quizFormPage.clickSaveQuizButton();
         handleConfirmationAlert(true);
-        assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_1"));
+        assertQuizDivContainsText("Will it change?");
     }
 
     @Test
     @DisplayName("Find quiz by title")
     public void findQuizByTitleTest() {
-        assertTrue(quizzesPage.getQuizByTitle(dotenv.get("QUIZ_TITLE_3")).isDisplayed());
+        Map<String, Boolean> answers = new HashMap<>();
+        answers.put("Yes", true);
+        answers.put("No", false);
+
+        String randomNum = Utils.getRandomNum();
+        createNewQuiz("test quiz" + randomNum, "Will it fail?", answers);
+        mainPage.clickAllQuizzes();
+        assertTrue(quizzesPage.getQuizByTitle("test quiz" + randomNum).isDisplayed());
     }
     @AfterEach
     public void teardown(){

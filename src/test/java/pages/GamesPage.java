@@ -3,39 +3,39 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
+import org.openqa.selenium.support.ui.FluentWait;
 import java.util.List;
 
 public class GamesPage {
-    private final WebDriverWait wait;
+    private final FluentWait<WebDriver> wait;
 
-    public GamesPage(WebDriver driver, WebDriverWait wait) {
+    public GamesPage(WebDriver driver, FluentWait<WebDriver> wait) {
         this.wait = wait;
         PageFactory.initElements(driver, this);
     }
 
     private List<WebElement> getGamesList(){
-        return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[@class='flex flex-row border-2 m-2 p-1 rounded-md']")));
+        return wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(
+                By.xpath("//div[contains(@class, 'flex') and contains(@class, 'flex-row') and contains(@class, 'border-2') and contains(@class, 'm-2') and contains(@class, 'p-1') and contains(@class, 'rounded-md')]")
+        ));
     }
 
     public WebElement getGameByName(String gameName){
-        return getGamesList().stream().filter(element -> element.findElement(By.xpath("//div[@class='grow pt-16']//div//span")).getText().contains(gameName)).toList().getFirst();
+        List<WebElement> gamesList = getGamesList();
+        for(WebElement game: gamesList){
+            if(game.getText().contains(gameName)){
+                return game;
+            }
+        }
+        return null;
     }
 
     public void clickJoinGameByName(String gameName){
         WebElement gameToJoin = getGameByName(gameName);
-        gameToJoin.findElement(By.xpath("//button[normalize-space()='Join']")).click();
+        gameToJoin.findElement(By.xpath(".//button[normalize-space()='Join']")).click();
+        wait.until(ExpectedConditions.urlContains("game/quiz"));
     }
 
-    public void renamePlayer(String playerName) {
-        WebElement playerNameField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("playerName")));
-        WebElement joinButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[text()='Join']")));
-
-        playerNameField.sendKeys(playerName);
-        joinButton.click();
-    }
 }

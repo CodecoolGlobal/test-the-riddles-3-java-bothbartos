@@ -1,64 +1,105 @@
 package tests;
 
 import org.junit.jupiter.api.*;
-import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-
+import org.openqa.selenium.support.ui.FluentWait;
+import pages.GamesPage;
+import pages.LoginPage;
+import pages.QuizGamePage;
+import pages.SignUpPage;
+import tests.utils.Utils;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 class GamesPageTest extends BaseTest {
+
+    private WebDriver newPlayerDriver;
+    private FluentWait<WebDriver> newPlayerFluentWait;
+    private SignUpPage newPlayerSignUpPage;
+    private LoginPage newPlayerLoginPage;
+    private GamesPage newPlayerGamesPage;
+    private QuizGamePage newPlayerQuizGamePage;
 
     @BeforeEach
     void setUp() {
         initializeDriver();
-        driver.get(baseUrl + "login");
         driver.manage().window().maximize();
-        loginPage.login(dotenv.get("USERNAME_1"), dotenv.get("PASSWORD_1"));
-    }
+
+        driver.get(baseUrl + "register");
+
+        String username = Utils.createRandomUsername();
+        String password = Utils.createRandomPassword();
+        String email = Utils.createRandomEmail();
 
 
-    @Test
-    @DisplayName("Start new quiz game")
-    public void startNewQuizGameTest() {
-        startNewGame();
+        signUpPage.signUp(username, email, password);
 
-        assertUrlContains("game/lobby/");
+        wait.until(ExpectedConditions.urlToBe(baseUrl + "login"));
 
-        deleteQuizzes();
+        loginPage.login(username, password);
 
+        wait.until(ExpectedConditions.urlToBe(baseUrl));
+        mainPage.clickMyQuizzes();
     }
 
     @Test
     @DisplayName("Find game by name and join")
     public void findGameByNameAndJoinTest() {
-        startNewGame();
+        Map<String, Boolean> answers = new HashMap<>();
+        answers.put("Yes", true);
+        answers.put("No", false);
+        String quizTitle = "test quiz" +  Utils.getRandomNum();
+        createNewQuiz(quizTitle, "Can I Join?", answers);
+        mainPage.clickMyQuizzes();
+        myQuizzesPage.createGameLobby(quizTitle);
 
-        driver.get(baseUrl);
+        String newPlayerUsername = createNewPlayerDriver();
+        joinGameWithNewPlayer(quizTitle);
 
-        mainPage.clickGames();
-        gamesPage.clickJoinGameByName(dotenv.get("QUIZ_TITLE_1"));
-        assertUrlContains("game/quiz");
+        quizGamePage.clickStartButton();
 
-        deleteQuizzes();
+        newPlayerQuizGamePage.clickAnswerButton("Yes");
+
+        quizGamePage.clickResultButton();
+
+        assertTrue(quizGamePage.isUsernameOnScoreBoard(newPlayerUsername));
+        assertTrue(quizGamePage.isScoreHigherThanZero());
+
+        quitNewPlayerDriver();
     }
+
 
     @Test
     @DisplayName("Join game and rename player then join")
     public void joinGameAndRenamePlayerTest() {
-        startNewGame();
+        Map<String, Boolean> answers = new HashMap<>();
+        answers.put("Yes", true);
+        answers.put("No", false);
+        String randomNum = Utils.getRandomNum();
+        createNewQuiz("test quiz" + randomNum, "Can I Join and rename player?", answers);
+        mainPage.clickMyQuizzes();
+        myQuizzesPage.createGameLobby("test quiz" + randomNum);
 
-        driver.get(baseUrl);
+        createNewPlayerDriver();
+        String newPlayerUsername = "RENAMED_USER" + randomNum;
+        joinGameWithNewPlayer("test quiz" + randomNum, newPlayerUsername);
 
-        mainPage.clickGames();
-        gamesPage.clickJoinGameByName(dotenv.get("QUIZ_TITLE_1"));
-        gamesPage.renamePlayer("PLAYER");
-        assertTrue(wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[text()='Good luck!']"))).isDisplayed());
-        deleteQuizzes();
+        quizGamePage.clickStartButton();
+
+        newPlayerQuizGamePage.clickAnswerButton("Yes");
+
+        quizGamePage.clickResultButton();
+
+        assertTrue(quizGamePage.isUsernameOnScoreBoard(newPlayerUsername));
+        assertTrue(quizGamePage.isScoreHigherThanZero());
+
+        quitNewPlayerDriver();
     }
 
     @Test
@@ -68,32 +109,85 @@ class GamesPageTest extends BaseTest {
 
         myQuizzesPage.clickOnAddQuiz();
 
-        quizFormPage.enterQuizTitle(dotenv.get("QUIZ_TITLE_2"));
+        String quizTitle = "test quiz" + Utils.getRandomNum();
+        quizFormPage.enterQuizTitle(quizTitle);
         quizFormPage.clickSaveQuizButton();
         handleConfirmationAlert(true);
 
         mainPage.clickMyQuizzes();
 
-        myQuizzesPage.startInvalidGame(dotenv.get("QUIZ_TITLE_2"));
+        myQuizzesPage.createGameLobby(quizTitle);
 
-        mainPage.clickGames();
 
-        assertFalse(assertQuizDivContainsText(dotenv.get("QUIZ_TITLE_2")));
-        deleteQuizzes();
+        assertTrue(myQuizzesPage.isSadEmojiButtonPresent());
     }
 
-
-    private void startNewGame() {
-
-        mainPage.clickMyQuizzes();
+    @Test
+    @DisplayName("Join game, then select wrong answer")
+    public void joinGameWithWrongAnswerTest() {
         Map<String, Boolean> answers = new HashMap<>();
-        answers.put(dotenv.get("QUIZ_1_ANSWER_1"), true);
-        answers.put(dotenv.get("QUIZ_1_ANSWER_2"), false);
-        createNewQuiz(dotenv.get("QUIZ_TITLE_1"), dotenv.get("QUIZ_QUESTION_1"), answers);
-
+        answers.put("Yes", true);
+        answers.put("No", false);
+        String quizTitle = "test quiz" +  Utils.getRandomNum();
+        createNewQuiz(quizTitle, "Can I Join?", answers);
         mainPage.clickMyQuizzes();
+        myQuizzesPage.createGameLobby(quizTitle);
 
-        myQuizzesPage.playQuiz(dotenv.get("QUIZ_TITLE_1"));
+        String newPlayerUsername = createNewPlayerDriver();
+        joinGameWithNewPlayer(quizTitle);
+
+        quizGamePage.clickStartButton();
+
+        newPlayerQuizGamePage.clickAnswerButton("No");
+
+        quizGamePage.clickResultButton();
+
+        assertTrue(quizGamePage.isUsernameOnScoreBoard(newPlayerUsername));
+        assertFalse(quizGamePage.isScoreHigherThanZero());
+
+        quitNewPlayerDriver();
     }
 
+    private String createNewPlayerDriver(){
+        newPlayerDriver = new ChromeDriver(options);
+        newPlayerFluentWait = new FluentWait<>(newPlayerDriver)
+                .withTimeout(Duration.ofSeconds(4))
+                .pollingEvery(Duration.ofMillis(300))
+                .ignoring(NoSuchElementException.class);
+        newPlayerSignUpPage = new SignUpPage(newPlayerDriver, newPlayerFluentWait);
+        newPlayerLoginPage = new LoginPage(newPlayerDriver, newPlayerFluentWait);
+        newPlayerGamesPage = new GamesPage(newPlayerDriver, newPlayerFluentWait);
+        newPlayerQuizGamePage = new QuizGamePage(newPlayerDriver, newPlayerFluentWait);
+
+        String username = Utils.createRandomUsername();
+        String password = Utils.createRandomPassword();
+        String email = Utils.createRandomEmail();
+
+        newPlayerDriver.manage().window().maximize();
+        newPlayerDriver.get(baseUrl + "register");
+
+        newPlayerSignUpPage.signUp(username, email, password);
+
+        newPlayerFluentWait.until(ExpectedConditions.urlToBe(baseUrl + "login"));
+        newPlayerLoginPage.login(username, password);
+        newPlayerFluentWait.until(ExpectedConditions.urlToBe(baseUrl));
+        return username;
+    }
+
+    private void joinGameWithNewPlayer(String title) {
+        newPlayerDriver.get(baseUrl + "gamelist");
+        newPlayerGamesPage.clickJoinGameByName(title);
+        newPlayerQuizGamePage.clickJoinButton();
+    }
+
+    private void joinGameWithNewPlayer(String title, String newPlayerUsername) {
+        newPlayerDriver.get(baseUrl + "gamelist");
+        newPlayerGamesPage.clickJoinGameByName(title);
+        newPlayerQuizGamePage.renamePlayer(newPlayerUsername);
+        newPlayerQuizGamePage.clickJoinButton();
+    }
+
+    private void quitNewPlayerDriver() {
+        newPlayerDriver.quit();
+    }
 }

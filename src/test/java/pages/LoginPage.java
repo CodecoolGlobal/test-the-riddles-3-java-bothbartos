@@ -6,12 +6,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.FluentWait;
 
-import java.time.Duration;
 
 public class LoginPage {
-    private final WebDriverWait wait;
+    private final FluentWait<WebDriver> wait;
     @FindBy(id = "user-name")
     private WebElement username;
     @FindBy(id = "password")
@@ -19,7 +18,7 @@ public class LoginPage {
     @FindBy(xpath = "//*[text()='LOGIN']")
     private WebElement loginButton;
 
-    public LoginPage(WebDriver driver, WebDriverWait wait) {
+    public LoginPage(WebDriver driver, FluentWait<WebDriver> wait) {
         PageFactory.initElements(driver, this);
         this.wait = wait;
     }
@@ -32,8 +31,8 @@ public class LoginPage {
         this.password.sendKeys(password);
     }
     public void clickLoginButton() {
-        wait.until(ExpectedConditions.visibilityOf(this.loginButton));
-        this.loginButton.click();
+        wait.until(ExpectedConditions.elementToBeClickable(loginButton));
+        loginButton.click();
     }
 
     public void login(String username, String password) {
@@ -49,13 +48,5 @@ public class LoginPage {
         }catch (NoSuchElementException e){
             return false;
         }
-    }
-
-    public String getUsername() {
-        return username.getText();
-    }
-
-    public String getPassword() {
-        return password.getText();
     }
 }

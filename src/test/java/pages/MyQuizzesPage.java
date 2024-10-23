@@ -7,25 +7,21 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.FluentWait;
 import java.util.List;
-import java.util.function.Function;
-
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MyQuizzesPage {
-    private final WebDriverWait wait;
+    private final FluentWait<WebDriver> wait;
     private final WebDriver driver;
     @FindBy(xpath = "//button[text()='Add Quiz']")
     private WebElement addQuizButton;
     @FindBy(xpath = "//button[text()='Create game lobby']")
     private WebElement createGameLobbyButton;
-    @FindBy(xpath = "//button[text()='Start']")
-    private WebElement startGameButton;
     @FindBy(xpath = "//button[text()=':(']")
     private WebElement notValidGameButton;
 
-    public MyQuizzesPage(WebDriver driver, WebDriverWait wait) {
+    public MyQuizzesPage(WebDriver driver, FluentWait<WebDriver> wait) {
         PageFactory.initElements(driver, this);
         this.wait = wait;
         this.driver = driver;
@@ -38,8 +34,6 @@ public class MyQuizzesPage {
         List<WebElement> quizDivs =  getQuizzes();
         for (WebElement quizTitle : quizDivs) {
             String quizTitleText = quizTitle.findElement(By.xpath("./span")).getText();
-            //TODO: delete later
-            System.out.println(quizTitleText);
             if (quizTitleText.equals(title)) {
                 return quizTitle;
             }
@@ -67,15 +61,6 @@ public class MyQuizzesPage {
             handleConfirmationAlert(true);
         }
     }
-    public void playQuiz(String title) {
-        WebElement quiz = getQuizByTitle(title);
-        if (quiz != null) {
-            WebElement playButton = wait.until(ExpectedConditions.elementToBeClickable(quiz.findElement(By.xpath("//button[text()='Play']"))));
-            playButton.click();
-            wait.until(ExpectedConditions.elementToBeClickable(createGameLobbyButton)).click();
-            wait.until(ExpectedConditions.elementToBeClickable(startGameButton)).click();
-        }
-    }
 
     public void deleteAllQuizzes(){
         List<WebElement> allUserQuizzes = getQuizzes();
@@ -96,15 +81,17 @@ public class MyQuizzesPage {
         }
     }
 
-    public void startInvalidGame(String title){
+    public void createGameLobby(String title){
         WebElement quiz = getQuizByTitle(title);
         if (quiz != null) {
             WebElement playButton = quiz.findElement(By.xpath("//button[text()='Play']"));
             playButton.click();
             wait.until(ExpectedConditions.elementToBeClickable(createGameLobbyButton)).click();
-            wait.until(ExpectedConditions.elementToBeClickable(notValidGameButton)).click();
-
         }
+    }
+
+    public boolean isSadEmojiButtonPresent() {
+        return notValidGameButton.isDisplayed();
     }
 
 }
